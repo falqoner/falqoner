@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    // The offline trap preloaded into CLI subprocesses is plain ESM
+    // JavaScript, because it runs under bare Node. Checking it keeps it typed.
+    "allowJs": true,
+    "checkJs": true,
+    // Type the tests against core's source, as vitest runs them, so a
+    // typecheck never depends on a stale or missing core build.
+    "paths": { "@falconer/core": ["../core/src/index.ts"] }
+  },
+  "include": ["src/**/*", "test/**/*", "vitest.config.ts"]
+}

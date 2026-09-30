@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="691" height="436" viewBox="0 0 691 436" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace" font-size="13" xml:space="preserve" role="img" aria-label="Falconer demo: what one Algorand key really controls">
+<style>
+text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;text-rendering:geometricPrecision;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+.scroller text{white-space:pre;opacity:0;}
+.loop-fade{animation:loopFade 10.31s ease-in-out infinite;}
+@keyframes loopFade{0%{opacity:0}1.2%{opacity:1}94.665%{opacity:1}98.545%{opacity:0}100%{opacity:0}}
+@keyframes ln0{0%,0.000%{opacity:0}0.485%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l0{animation:ln0 10.31s linear infinite}
+@keyframes ln1{0%,0.388%{opacity:0}1.164%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l1{animation:ln1 10.31s linear infinite}
+@keyframes ln2{0%,4.753%{opacity:0}5.529%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l2{animation:ln2 10.31s linear infinite}
+@keyframes ln3{0%,5.432%{opacity:0}6.208%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l3{animation:ln3 10.31s linear infinite}
+@keyframes ln4{0%,9.796%{opacity:0}10.572%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l4{animation:ln4 10.31s linear infinite}
+@keyframes ln5{0%,14.161%{opacity:0}14.937%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l5{animation:ln5 10.31s linear infinite}
+@keyframes ln6{0%,14.840%{opacity:0}15.616%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l6{animation:ln6 10.31s linear infinite}
+@keyframes ln7{0%,17.750%{opacity:0}18.526%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l7{animation:ln7 10.31s linear infinite}
+@keyframes ln8{0%,23.084%{opacity:0}23.860%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l8{animation:ln8 10.31s linear infinite}
+@keyframes ln9{0%,23.763%{opacity:0}24.539%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l9{animation:ln9 10.31s linear infinite}
+@keyframes ln10{0%,24.442%{opacity:0}25.218%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l10{animation:ln10 10.31s linear infinite}
+@keyframes ln11{0%,25.121%{opacity:0}25.897%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l11{animation:ln11 10.31s linear infinite}
+@keyframes ln12{0%,25.800%{opacity:0}26.576%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l12{animation:ln12 10.31s linear infinite}
+@keyframes ln13{0%,26.479%{opacity:0}27.255%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l13{animation:ln13 10.31s linear infinite}
+@keyframes ln14{0%,27.158%{opacity:0}27.934%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l14{animation:ln14 10.31s linear infinite}
+@keyframes ln15{0%,27.837%{opacity:0}28.613%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l15{animation:ln15 10.31s linear infinite}
+@keyframes ln16{0%,28.516%{opacity:0}29.292%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l16{animation:ln16 10.31s linear infinite}
+@keyframes ln17{0%,29.195%{opacity:0}29.971%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l17{animation:ln17 10.31s linear infinite}
+@keyframes ln18{0%,29.874%{opacity:0}30.650%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l18{animation:ln18 10.31s linear infinite}
+@keyframes ln19{0%,30.553%{opacity:0}31.329%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l19{animation:ln19 10.31s linear infinite}
+@keyframes ln20{0%,31.232%{opacity:0}32.008%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l20{animation:ln20 10.31s linear infinite}
+@keyframes ln21{0%,31.911%{opacity:0}32.687%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l21{animation:ln21 10.31s linear infinite}
+@keyframes ln22{0%,32.590%{opacity:0}33.366%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l22{animation:ln22 10.31s linear infinite}
+@keyframes ln23{0%,33.269%{opacity:0}34.045%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l23{animation:ln23 10.31s linear infinite}
+@keyframes ln24{0%,33.948%{opacity:0}34.724%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l24{animation:ln24 10.31s linear infinite}
+@keyframes ln25{0%,34.627%{opacity:0}35.403%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l25{animation:ln25 10.31s linear infinite}
+@keyframes ln26{0%,35.306%{opacity:0}36.081%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l26{animation:ln26 10.31s linear infinite}
+@keyframes ln27{0%,39.670%{opacity:0}40.446%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l27{animation:ln27 10.31s linear infinite}
+@keyframes ln28{0%,44.035%{opacity:0}44.811%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l28{animation:ln28 10.31s linear infinite}
+@keyframes ln29{0%,44.714%{opacity:0}45.490%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l29{animation:ln29 10.31s linear infinite}
+@keyframes ln30{0%,47.624%{opacity:0}48.400%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l30{animation:ln30 10.31s linear infinite}
+@keyframes ln31{0%,52.958%{opacity:0}53.734%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l31{animation:ln31 10.31s linear infinite}
+@keyframes ln32{0%,53.637%{opacity:0}54.413%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l32{animation:ln32 10.31s linear infinite}
+@keyframes ln33{0%,54.316%{opacity:0}55.092%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l33{animation:ln33 10.31s linear infinite}
+@keyframes ln34{0%,54.995%{opacity:0}55.771%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l34{animation:ln34 10.31s linear infinite}
+@keyframes ln35{0%,55.674%{opacity:0}56.450%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l35{animation:ln35 10.31s linear infinite}
+@keyframes ln36{0%,56.353%{opacity:0}57.129%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l36{animation:ln36 10.31s linear infinite}
+@keyframes ln37{0%,57.032%{opacity:0}57.808%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l37{animation:ln37 10.31s linear infinite}
+@keyframes ln38{0%,57.711%{opacity:0}58.487%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l38{animation:ln38 10.31s linear infinite}
+@keyframes ln39{0%,58.390%{opacity:0}59.166%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l39{animation:ln39 10.31s linear infinite}
+@keyframes ln40{0%,59.069%{opacity:0}59.845%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l40{animation:ln40 10.31s linear infinite}
+@keyframes ln41{0%,59.748%{opacity:0}60.524%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l41{animation:ln41 10.31s linear infinite}
+@keyframes ln42{0%,60.427%{opacity:0}61.203%,94.665%{opacity:1}98.545%,100%{opacity:0}}.l42{animation:ln42 10.31s linear infinite}
+@keyframes scroll{0.000%{transform:translateY(0px);}31.426%{transform:translateY(0px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}32.008%{transform:translateY(-19px);}32.105%{transform:translateY(-19px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}32.687%{transform:translateY(-38px);}32.784%{transform:translateY(-38px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}33.366%{transform:translateY(-57px);}33.463%{transform:translateY(-57px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}34.045%{transform:translateY(-76px);}34.142%{transform:translateY(-76px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}34.724%{transform:translateY(-95px);}34.821%{transform:translateY(-95px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}35.403%{transform:translateY(-114px);}35.500%{transform:translateY(-114px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}36.081%{transform:translateY(-133px);}39.282%{transform:translateY(-133px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}40.446%{transform:translateY(-152px);}43.647%{transform:translateY(-152px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}44.811%{transform:translateY(-171px);}44.908%{transform:translateY(-171px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}45.490%{transform:translateY(-190px);}47.236%{transform:translateY(-190px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}48.400%{transform:translateY(-209px);}52.570%{transform:translateY(-209px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}53.734%{transform:translateY(-228px);}53.831%{transform:translateY(-228px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}54.413%{transform:translateY(-247px);}54.510%{transform:translateY(-247px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}55.092%{transform:translateY(-266px);}55.189%{transform:translateY(-266px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}55.771%{transform:translateY(-285px);}55.868%{transform:translateY(-285px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}56.450%{transform:translateY(-304px);}56.547%{transform:translateY(-304px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}57.129%{transform:translateY(-323px);}57.226%{transform:translateY(-323px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}57.808%{transform:translateY(-342px);}57.905%{transform:translateY(-342px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}58.487%{transform:translateY(-361px);}58.584%{transform:translateY(-361px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}59.166%{transform:translateY(-380px);}59.263%{transform:translateY(-380px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}59.845%{transform:translateY(-399px);}59.942%{transform:translateY(-399px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}60.524%{transform:translateY(-418px);}60.621%{transform:translateY(-418px);animation-timing-function:cubic-bezier(0.25,1,0.5,1);}61.203%{transform:translateY(-437px);}94.665%{transform:translateY(-437px);}98.545%{transform:translateY(0px);}100.000%{transform:translateY(0px);}}
+.scroller{animation:scroll 10.31s linear infinite;will-change:transform;}
+</style>
+<rect width="691" height="436" rx="10" fill="#0c0f14" stroke="#30363d" stroke-width="1"/>
+<rect width="691" height="32" rx="10" fill="#161b22"/>
+<rect y="16" width="691" height="16" fill="#161b22"/>
+<line x1="0" y1="32" x2="691" y2="32" stroke="#21262d" stroke-width="1"/>
+<circle cx="19" cy="16" r="5" fill="#ff5f56"/>
+<circle cx="37" cy="16" r="5" fill="#ffbd2e"/>
+<circle cx="55" cy="16" r="5" fill="#27c93f"/>
+<text x="345.5" y="20.5" text-anchor="middle" fill="#7d8699" font-size="11.5">falconer — post-quantum authority</text>
+<clipPath id="view"><rect x="0" y="33" width="691" height="403"/></clipPath>
+<g clip-path="url(#view)"><g class="loop-fade"><g class="scroller">
+<text class="l0" x="18" y="56"></text>
+<text class="l1" x="18" y="75"><tspan fill="#7d8699">  # Fixture ledger: fixed records answering for LocalNet. No node, no</tspan></text>
+<text class="l2" x="18" y="94"><tspan fill="#7d8699">  # network, not live data. npm run demo -- --live reads MainNet instead.</tspan></text>
+<text class="l3" x="18" y="113"></text>
+<text class="l4" x="18" y="132"><tspan fill="#7d8699">  # 1. Authority, not balance: scan reports roles beyond the balance.</tspan></text>
+<text class="l5" x="18" y="151"><tspan fill="#7d8699">  # In the fixture this account holds 0.3 ALGO and manages asset 7001.</tspan></text>
+<text class="l6" x="18" y="170"></text>
+<text class="l7" x="18" y="189"><tspan fill="#79c0ff">  $ falconer scan CSETLP27ZYRABTR5E6HUAWNSWGEHYHCLB56OFF64E6TW7ZHS3RJLCR2CNE \</tspan></text>
+<text class="l8" x="18" y="208"><tspan fill="#79c0ff">      --assets 7001 --compact --network localnet</tspan></text>
+<text class="l9" x="18" y="227"></text>
+<text class="l10" x="18" y="246"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">account</tspan><tspan fill="#c9d1d9">    </tspan><tspan fill="#c9d1d9" font-weight="600">CSETLP27ZYRABTR5E6HUAWNSWGEHYHCLB56OFF64E6TW7ZHS3RJLCR2CNE</tspan></text>
+<text class="l11" x="18" y="265"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">balance</tspan><tspan fill="#c9d1d9">    0.3 ALGO</tspan></text>
+<text class="l12" x="18" y="284"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">authority</tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#ff5964">classical, by address shape: on the Ed25519 curve</tspan></text>
+<text class="l13" x="18" y="303"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">basis    </tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">address shape only; account type not observed</tspan></text>
+<text class="l14" x="18" y="322"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">risk</tspan><tspan fill="#c9d1d9">       </tspan><tspan fill="#ff9f43" font-weight="600"> 55</tspan><tspan fill="#7d8699">/100</tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#ff9f43">High exposure</tspan></text>
+<text class="l15" x="18" y="341"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">coverage </tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#3ddc84">complete for the checks run</tspan></text>
+<text class="l16" x="18" y="360"></text>
+<text class="l17" x="18" y="379"><tspan fill="#c9d1d9">  </tspan><tspan fill="#c9d1d9" font-weight="600">Findings</tspan></text>
+<text class="l18" x="18" y="398"><tspan fill="#c9d1d9">  </tspan><tspan fill="#ff5964">▲</tspan><tspan fill="#c9d1d9"> </tspan><tspan fill="#ff5964">critical</tspan><tspan fill="#c9d1d9"> Manager of FXD</tspan></text>
+<text class="l19" x="18" y="417"></text>
+<text class="l20" x="18" y="436"><tspan fill="#c9d1d9">  </tspan><tspan fill="#ff5964">!</tspan><tspan fill="#c9d1d9"> </tspan><tspan fill="#ff5964">This address can seize 1 asset from any holder. Those roles are</tspan></text>
+<text class="l21" x="18" y="455"><tspan fill="#c9d1d9">    </tspan><tspan fill="#ff5964">exercised under this account's own authority, which is not</tspan></text>
+<text class="l22" x="18" y="474"><tspan fill="#c9d1d9">    </tspan><tspan fill="#ff5964">established as post-quantum. Breaking the exposed key would reach</tspan></text>
+<text class="l23" x="18" y="493"><tspan fill="#c9d1d9">    </tspan><tspan fill="#ff5964">beyond this account.</tspan></text>
+<text class="l24" x="18" y="512"></text>
+<text class="l25" x="18" y="531"><tspan fill="#7d8699">  exit 0: report printed</tspan></text>
+<text class="l26" x="18" y="550"></text>
+<text class="l27" x="18" y="569"><tspan fill="#7d8699">  # 2. Record, not shape: verify names an authority only from a confirmed record.</tspan></text>
+<text class="l28" x="18" y="588"><tspan fill="#7d8699">  # In the fixture: a 2-of-3 multisig address, with one confirmed record.</tspan></text>
+<text class="l29" x="18" y="607"></text>
+<text class="l30" x="18" y="626"><tspan fill="#79c0ff">  $ falconer verify WIYMIKTJUQR3PE4HXJVM64WWOHFUMMPAJVZ3JYPLUGF2ZRYUWEOHNGE22E \</tspan></text>
+<text class="l31" x="18" y="645"><tspan fill="#79c0ff">      --compact --network localnet</tspan></text>
+<text class="l32" x="18" y="664"></text>
+<text class="l33" x="18" y="683"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">account</tspan><tspan fill="#c9d1d9">    WIYMIKTJUQR3PE4HXJVM64WWOHFUMMPAJVZ3JYPLUGF2ZRYUWEOHNGE22E</tspan></text>
+<text class="l34" x="18" y="702"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">authority</tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#ff5964">classical multisignature, on a provider-confirmed record</tspan></text>
+<text class="l35" x="18" y="721"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">evidence   </tspan><tspan fill="#c9d1d9">tx/FIXTUREMULTISIGAAAAAAAAAAAAAAAAAAAAA...</tspan></text>
+<text class="l36" x="18" y="740"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">verdict</tspan><tspan fill="#c9d1d9">    </tspan><tspan fill="#ff5964">✖ not established as post-quantum</tspan></text>
+<text class="l37" x="18" y="759"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">basis    </tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">confirmed record</tspan></text>
+<text class="l38" x="18" y="778"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">         </tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">FIXTUREMULTISIGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA in round</tspan></text>
+<text class="l39" x="18" y="797"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">         </tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">42, reported by the localnet indexer; signature bytes not</tspan></text>
+<text class="l40" x="18" y="816"><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">         </tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#7d8699">verified by Falconer</tspan></text>
+<text class="l41" x="18" y="835"></text>
+<text class="l42" x="18" y="854"><tspan fill="#7d8699">  exit 2: not established as post-quantum</tspan></text>
+</g></g></g>
+</svg>

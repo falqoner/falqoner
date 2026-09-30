@@ -1,0 +1,58 @@
+{
+  "name": "falconer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Post-quantum migration platform for Algorand",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/falqoner/falqoner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/falqoner/falqoner/issues"
+  },
+  "homepage": "https://github.com/falqoner/falqoner#readme",
+  "type": "module",
+  "engines": {
+    "node": "^22.13.0 || ^24.0.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^22.13.0 || ^24.0.0",
+      "onFail": "error"
+    },
+    "packageManager": {
+      "name": "npm",
+      "version": "^10.9.0 || ^11.0.0",
+      "onFail": "error"
+    }
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @falconer/core && npm run build -w @falconer/cli && npm run build -w @falconer/web",
+    "typecheck": "tsc -p scripts/tsconfig.json && npm run typecheck -w @falconer/core && npm run typecheck -w @falconer/cli && npm run typecheck -w @falconer/web",
+    "format:check": "git diff --check 4b825dc642cb6eb9a060e54bf8d69288fbee4904 --",
+    "test": "node scripts/run-tests.mjs unit",
+    "test:unit": "node scripts/run-tests.mjs unit",
+    "test:localnet": "node scripts/run-tests.mjs localnet",
+    "test:all": "node scripts/run-tests.mjs all",
+    "test:web-smoke": "node scripts/web-smoke.mjs",
+    "test:package": "node scripts/package-check.mjs",
+    "dev": "npm run dev -w @falconer/web",
+    "localnet:start": "python -m algokit localnet start",
+    "localnet:stop": "python -m algokit localnet stop",
+    "localnet:status": "node scripts/localnet-preflight.mjs",
+    "demo": "node scripts/demo.mjs",
+    "record": "node scripts/record-demo.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "playwright-core": "^1.63.0",
+    "typescript": "^5.7.2",
+    "vitest": "^5.0.1"
+  }
+}

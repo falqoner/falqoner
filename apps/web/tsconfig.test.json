@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["vite/client", "node"],
+    // Type the tests against core's source, as vitest runs them.
+    "paths": { "@falconer/core": ["../../packages/core/src/index.ts"] }
+  },
+  "include": ["src/**/*", "test/**/*", "vitest.config.ts"]
+}

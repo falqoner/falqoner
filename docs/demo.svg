@@ -1,0 +1,217 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 425" width="100%" height="425" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif" role="img" aria-label="Falconer: What one crypto key really controls">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a0e17"/>
+      <stop offset="100%" stop-color="#06090e"/>
+    </linearGradient>
+
+    <!-- Left Card: Deceptive Surface (Standard Explorer) -->
+    <linearGradient id="card-left-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#101624"/>
+      <stop offset="100%" stop-color="#0c101a"/>
+    </linearGradient>
+
+    <!-- Right Card: High-Stakes Reality (Falconer Audit) -->
+    <linearGradient id="card-right-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#14111d"/>
+      <stop offset="100%" stop-color="#0d0d16"/>
+    </linearGradient>
+
+    <!-- Shock Box: Controlled Critical Alert -->
+    <linearGradient id="alert-box-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1d1017"/>
+      <stop offset="100%" stop-color="#140b10"/>
+    </linearGradient>
+
+    <!-- Subtle Bevel Highlight for Crisp Modern Edge -->
+    <linearGradient id="bevel-highlight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.07"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.02"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.07"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Container Box -->
+  <rect width="740" height="425" rx="12" fill="url(#bg-grad)" stroke="#1a2333" stroke-width="1.2"/>
+  <rect x="1" y="1" width="738" height="423" rx="11" fill="none" stroke="url(#bevel-highlight)" stroke-width="1"/>
+
+  <!-- Instrument Header -->
+  <line x1="0" y1="40" x2="740" y2="40" stroke="#161f2e" stroke-width="1"/>
+
+  <!-- Left: Live Audit Signal -->
+  <g transform="translate(24, 13)">
+    <circle cx="7" cy="7" r="3" fill="#3ddc84"/>
+    <circle cx="7" cy="7" r="6.5" fill="#3ddc84" fill-opacity="0.18"/>
+    <text x="19" y="10.5" fill="#64748b" font-size="9.5" font-weight="600" letter-spacing="0.08em">MAINNET AUDIT</text>
+  </g>
+
+  <!-- Center: Title Breadcrumb -->
+  <g transform="translate(370, 24)">
+    <text text-anchor="middle" font-size="11" letter-spacing="0.08em">
+      <tspan fill="#f1f5f9" font-weight="700">FALCONER</tspan>
+      <tspan fill="#334155" font-weight="400">  •  </tspan>
+      <tspan fill="#94a3b8" font-weight="600">REAL ALGORAND MAINNET AUDIT</tspan>
+    </text>
+  </g>
+
+  <!-- Right: Protocol Badge -->
+  <g transform="translate(628, 11)">
+    <rect width="88" height="18" rx="4" fill="#0f1624" stroke="#1b283d" stroke-width="1"/>
+    <text x="44" y="12.5" text-anchor="middle" fill="#58a6ff" font-size="9" font-weight="600" letter-spacing="0.06em">CONSENSUS v5</text>
+  </g>
+
+  <!-- ==================== LEFT: WHAT A BALANCE SHOWS ==================== -->
+  <g transform="translate(24, 54)">
+    <rect width="332" height="280" rx="8" fill="url(#card-left-grad)" stroke="#1a2333" stroke-width="1"/>
+
+    <!-- Tag Pill -->
+    <rect x="18" y="16" width="136" height="20" rx="4" fill="#131c2a" stroke="#1f2c40"/>
+    <text x="26" y="29.5" fill="#64748b" font-size="9.5" font-weight="700" letter-spacing="0.08em">
+      STANDARD EXPLORER
+    </text>
+
+    <text x="18" y="56" fill="#e2e8f0" font-size="14.5" font-weight="600" letter-spacing="-0.01em">
+      What a balance shows
+    </text>
+
+    <!-- Address snippet -->
+    <rect x="18" y="68" width="296" height="28" rx="5" fill="#080b11" stroke="#161f2e"/>
+    <text x="28" y="86" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="11">
+      Account: <tspan fill="#38bdf8">37XL3M57AX...5HAL4</tspan>
+    </text>
+
+    <!-- Balance metric -->
+    <g transform="translate(18, 116)">
+      <text x="0" y="0" fill="#64748b" font-size="9.5" font-weight="700" letter-spacing="0.08em">LEDGER BALANCE</text>
+      <text x="0" y="32" fill="#f1f5f9" font-size="28" font-weight="700" letter-spacing="-0.02em">0.299 ALGO</text>
+      <text x="0" y="50" fill="#64748b" font-size="11.5" font-weight="400">Dust balance (&lt; 0.3 ALGO)</text>
+    </g>
+
+    <!-- Hairline Divider -->
+    <line x1="18" y1="186" x2="314" y2="186" stroke="#151d2a" stroke-dasharray="2 3"/>
+
+    <!-- Asset inventory -->
+    <g transform="translate(18, 204)">
+      <text x="0" y="0" fill="#64748b" font-size="9.5" font-weight="700" letter-spacing="0.08em">TOKENS HELD</text>
+      <text x="0" y="20" fill="#cbd5e1" font-size="13.5" font-weight="500">0 tokens <tspan fill="#475569">·</tspan> Created nothing</text>
+    </g>
+
+    <!-- Conclusion pill -->
+    <rect x="18" y="240" width="296" height="26" rx="5" fill="#0d121b" stroke="#182232"/>
+    <circle cx="30" cy="253" r="3" fill="#475569"/>
+    <text x="40" y="256.5" fill="#64748b" font-size="11" font-weight="500">
+      Explorer verdict: <tspan fill="#94a3b8">"Empty dust account"</tspan>
+    </text>
+  </g>
+
+  <!-- Center "VS" Alignment Node -->
+  <g transform="translate(370, 0)">
+    <line x1="0" y1="72" x2="0" y2="316" stroke="#161f2e" stroke-dasharray="3 3"/>
+    <circle cx="0" cy="194" r="13" fill="#0b0f17" stroke="#222e42" stroke-width="1.2"/>
+    <text x="0" y="197.5" text-anchor="middle" fill="#8592a6" font-size="9" font-weight="800" letter-spacing="0.08em">VS</text>
+  </g>
+
+  <!-- ==================== RIGHT: WHAT THIS KEY CONTROLS ==================== -->
+  <g transform="translate(384, 54)">
+    <rect width="332" height="280" rx="8" fill="url(#card-right-grad)" stroke="#ef4444" stroke-opacity="0.35" stroke-width="1.2"/>
+
+    <!-- Tag Pill -->
+    <rect x="18" y="16" width="128" height="20" rx="4" fill="#261016" stroke="#541b25"/>
+    <circle cx="28" cy="26" r="3" fill="#f87171"/>
+    <text x="37" y="29.5" fill="#f87171" font-size="9.5" font-weight="800" letter-spacing="0.08em">
+      FALCONER AUDIT
+    </text>
+
+    <text x="18" y="56" fill="#ffffff" font-size="14.5" font-weight="600" letter-spacing="-0.01em">
+      What this key actually controls
+    </text>
+
+    <!-- 200M Shock Box -->
+    <rect x="18" y="68" width="296" height="92" rx="7" fill="url(#alert-box-grad)" stroke="#e11d48" stroke-opacity="0.45" stroke-width="1.2"/>
+    <g transform="translate(28, 86)">
+      <!-- Precision SVG Alert Triangle -->
+      <path d="M 5 0 L 10 9 L 0 9 Z" fill="#3f131a" stroke="#f87171" stroke-width="1.2" stroke-linejoin="round"/>
+      <line x1="5" y1="3.5" x2="5" y2="5.5" stroke="#f87171" stroke-width="1.1" stroke-linecap="round"/>
+      <circle cx="5" cy="7.2" r="0.5" fill="#f87171"/>
+
+      <text x="17" y="8" fill="#f87171" font-size="10" font-weight="800" letter-spacing="0.07em">
+        ACTIVE MANAGER OF USDC
+      </text>
+      <text x="0" y="38" fill="#ffffff" font-size="26" font-weight="800" letter-spacing="-0.03em">
+        $200,000,000+
+      </text>
+      <g transform="translate(0, 56)">
+        <circle cx="3" cy="-3.5" r="2.5" fill="#f59e0b"/>
+        <text x="12" y="0" fill="#fbbf24" font-size="11" font-weight="500">
+          Asset #31566704 <tspan fill="#d97706">·</tspan> Freeze &amp; admin authority
+        </text>
+      </g>
+    </g>
+
+    <!-- Consequence -->
+    <g transform="translate(18, 176)">
+      <text x="0" y="0" fill="#64748b" font-size="9.5" font-weight="700" letter-spacing="0.08em">IF THIS KEY IS COMPROMISED</text>
+      <text x="0" y="19" fill="#f1f5f9" font-size="12.5" font-weight="600">
+        Can freeze all USDC circulating on Algorand
+      </text>
+    </g>
+
+    <!-- Cryptographic Exposure -->
+    <rect x="18" y="214" width="296" height="52" rx="6" fill="#161017" stroke="#7f1d1d" stroke-opacity="0.65" stroke-width="1"/>
+    <g transform="translate(28, 231)">
+      <!-- Precision SVG Warning Icon -->
+      <path d="M 4.5 0 L 9 8 L 0 8 Z" fill="#3f131a" stroke="#f87171" stroke-width="1.1" stroke-linejoin="round"/>
+      <line x1="4.5" y1="3" x2="4.5" y2="5" stroke="#f87171" stroke-width="1" stroke-linecap="round"/>
+      <circle cx="4.5" cy="6.6" r="0.5" fill="#f87171"/>
+
+      <text x="15" y="7" fill="#f87171" font-size="9.5" font-weight="800" letter-spacing="0.07em">
+        CLASSICAL SIGNATURE (ED25519)
+      </text>
+      <text x="0" y="24" fill="#cbd5e1" font-size="11" font-weight="400">
+        Exposed on chain <tspan fill="#475569">·</tspan> Needs rotation to Falcon-1024
+      </text>
+    </g>
+  </g>
+
+  <!-- ==================== FOOTER: HOW FALCONER HELPS ==================== -->
+  <g transform="translate(24, 348)">
+    <rect width="692" height="60" rx="8" fill="#0b0f17" stroke="#1a2333" stroke-width="1"/>
+
+    <!-- Step 1 -->
+    <g transform="translate(14, 18)">
+      <rect width="24" height="24" rx="6" fill="#101a2c" stroke="#2563eb" stroke-opacity="0.4" stroke-width="1"/>
+      <text x="12" y="16.5" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700">1</text>
+      <text x="32" y="10" fill="#f8fafc" font-size="11.5" font-weight="600">Audit Authority</text>
+      <text x="32" y="22" fill="#64748b" font-size="9.5">Map admin roles behind dust accounts</text>
+    </g>
+
+    <!-- Connector 1 -> 2 -->
+    <g transform="translate(206, 30)">
+      <line x1="0" y1="0" x2="10" y2="0" stroke="#243046" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M 8 -3 L 12 0 L 8 3" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <!-- Step 2 -->
+    <g transform="translate(228, 18)">
+      <rect width="24" height="24" rx="6" fill="#221912" stroke="#d97706" stroke-opacity="0.4" stroke-width="1"/>
+      <text x="12" y="16.5" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="700">2</text>
+      <text x="32" y="10" fill="#f8fafc" font-size="11.5" font-weight="600">Verify Signatures</text>
+      <text x="32" y="22" fill="#64748b" font-size="9.5">Check on-chain proof of quantum safety</text>
+    </g>
+
+    <!-- Connector 2 -> 3 -->
+    <g transform="translate(434, 30)">
+      <line x1="0" y1="0" x2="10" y2="0" stroke="#243046" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M 8 -3 L 12 0 L 8 3" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <!-- Step 3 -->
+    <g transform="translate(456, 18)">
+      <rect width="24" height="24" rx="6" fill="#0d2218" stroke="#059669" stroke-opacity="0.4" stroke-width="1"/>
+      <text x="12" y="16.5" text-anchor="middle" fill="#34d399" font-size="11" font-weight="700">3</text>
+      <text x="32" y="10" fill="#f8fafc" font-size="11.5" font-weight="600">Rekey to Falcon</text>
+      <text x="32" y="22" fill="#64748b" font-size="9.5">Upgrade protection with zero address changes</text>
+    </g>
+  </g>
+</svg>

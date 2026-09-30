@@ -1,0 +1,38 @@
+{
+  "name": "@falconer/cli",
+  "version": "0.1.0",
+  "description": "Post-quantum readiness CLI for Algorand: read-only inspection and migration planning",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/falqoner/falqoner.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/falqoner/falqoner/issues"
+  },
+  "homepage": "https://github.com/falqoner/falqoner#readme",
+  "type": "module",
+  "engines": {
+    "node": "^22.13.0 || ^24.0.0"
+  },
+  "bin": {
+    "falconer": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.test.json",
+    "test": "vitest run --config vitest.config.ts",
+    "test:unit": "vitest run --config vitest.config.ts"
+  },
+  "dependencies": {
+    "@falconer/core": "*"
+  },
+  "devDependencies": {
+    "algosdk": "^3.7.0",
+    "js-sha512": "^0.8.0"
+  }
+}

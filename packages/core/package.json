@@ -1,0 +1,44 @@
+{
+  "name": "@falconer/core",
+  "version": "0.1.0",
+  "description": "Post-quantum exposure analysis and migration engine for Algorand",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/falqoner/falqoner.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/falqoner/falqoner/issues"
+  },
+  "homepage": "https://github.com/falqoner/falqoner#readme",
+  "type": "module",
+  "engines": {
+    "node": "^22.13.0 || ^24.0.0"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.test.json",
+    "test": "vitest run --config vitest.config.ts",
+    "test:unit": "vitest run --config vitest.config.ts",
+    "test:localnet": "vitest run --config vitest.localnet.config.ts",
+    "test:all": "node ../../scripts/run-tests.mjs all",
+    "localnet:status": "node ../../scripts/localnet-preflight.mjs"
+  },
+  "dependencies": {
+    "algosdk": "^3.7.0",
+    "falcon-1024": "^0.2.0",
+    "js-sha512": "^0.8.0"
+  }
+}

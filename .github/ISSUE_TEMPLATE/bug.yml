@@ -1,0 +1,74 @@
+name: Bug report
+description: Something in Falqoner does not work as its documentation says.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Never include a recovery phrase, private key, seed, token or funds**, here or anywhere else. No report needs them, and no maintainer will ask for them. If a phrase was exposed, treat that key as compromised and move what it controls.
+
+        **Security vulnerabilities and other sensitive details do not belong in issues.** Report them privately to security@falqoner.com, as `SECURITY.md` in the repository root describes, and do not post them anywhere public.
+  - type: input
+    id: commit
+    attributes:
+      label: Commit
+      description: The output of `git rev-parse HEAD` in the checkout you ran.
+    validations:
+      required: true
+  - type: dropdown
+    id: network
+    attributes:
+      label: Network
+      options:
+        - MainNet
+        - TestNet
+        - LocalNet
+        - No network (offline demo or tests)
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where
+      options:
+        - Web app
+        - CLI
+        - Core package
+        - Tests or tooling
+        - Documentation
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Your operating system and `node --version`, and for the web app the browser and its version.
+      placeholder: Windows 11, Node 22.15.0, Chrome 153
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The smallest set of commands or page actions that shows the problem.
+      placeholder: |
+        1. npm ci && npm run build
+        2. node packages/cli/dist/index.js verify <ADDRESS> --network testnet
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Public diagnostics (optional)
+      description: Command output, public addresses, transaction ids and rounds, or browser console errors. Remove anything you would not post publicly, and never paste `keygen` output.
+      render: text

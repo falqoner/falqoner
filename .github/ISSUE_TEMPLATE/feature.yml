@@ -1,0 +1,27 @@
+name: Feature request
+description: Suggest a change to what Falqoner does or explains.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A request starts a discussion; it does not commit the project to the change. Never include a recovery phrase, private key, seed, token or funds.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What you are trying to do, and where Falqoner falls short today.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Proposed outcome
+      description: What would be different if this were solved. Describing the behavior is enough; no implementation is needed.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Alternatives or other context (optional)
+      description: Workarounds you use, related tools, or public links.

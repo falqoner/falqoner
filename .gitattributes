@@ -1,0 +1,11 @@
+# LF in the repository and in every checkout, whatever core.autocrlf says.
+# `whitespace` is what `npm run format:check` (git diff --check) enforces.
+* text=auto eol=lf whitespace=trailing-space,space-before-tab,tab-in-indent
+
+# Two trailing spaces are a Markdown line break.
+*.md whitespace=-blank-at-eol,tab-in-indent
+
+# Generated or exported: written by npm, `npm run record` or a drawing tool.
+package-lock.json -whitespace
+*.svg -whitespace
+*.cast -whitespace

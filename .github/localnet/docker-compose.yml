@@ -1,0 +1,73 @@
+# The LocalNet the hosted integration job runs. This directory is what
+# AlgoKit 2.10.2's `algokit localnet start` writes (the three config files
+# byte for byte), with three changes to this file:
+#
+# - Every image is pinned by digest to the build the LocalNet suite passed
+#   against, where AlgoKit pulls :latest. The tag in front of each digest is a
+#   label; Docker pulls the digest. Upgrading any image means re-verifying the
+#   suite, like the genesis and protocol policy in scripts/localnet-preflight.mjs.
+# - The project and container names are this job's own, so nothing done to
+#   this project can reach a developer's algokit_sandbox.
+# - The goal_mount bind is gone: nothing here uses goal, and the job writes
+#   nothing into the checkout.
+name: "falconer_ci_localnet"
+
+services:
+  algod:
+    container_name: "falconer_ci_localnet_algod"
+    image: algorand/algod:5.0.2-stable@sha256:3a2c9266b61e414e770aa69bd3d3867f8b350177c7af31df251db36ef70405a4
+    ports:
+      - 4001:8080
+      - 4002:7833
+      - 9392:9392
+    environment:
+      START_KMD: 1
+      KMD_TOKEN: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      TOKEN: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      ADMIN_TOKEN: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      GOSSIP_PORT: 10000
+    init: true
+    volumes:
+      - type: bind
+        source: ./algod_config.json
+        target: /etc/algorand/config.json
+      - type: bind
+        source: ./algod_network_template.json
+        target: /etc/algorand/template.json
+
+  conduit:
+    container_name: "falconer_ci_localnet_conduit"
+    image: algorandfoundation/conduit-localnet:1.1.0@sha256:c8b71a9e3916f0095367645767e78fce8d766f58400dcf796153fa68fdd38b90
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ./conduit.yml
+        target: /etc/algorand/conduit.yml
+    depends_on:
+      - indexer-db
+      - algod
+
+  indexer-db:
+    container_name: "falconer_ci_localnet_postgres"
+    # PostgreSQL 16.15 on Alpine 3.24: the 16-alpine build the suite passed
+    # against, since superseded under that tag by a rebuild.
+    image: postgres:16.15-alpine3.24@sha256:3c5c8892d184f738f4fe282d14ddaa613a38f00f4189d2d94725ebe6f2909ddb
+    ports:
+      - 5443:5432
+    user: postgres
+    environment:
+      POSTGRES_USER: algorand
+      POSTGRES_PASSWORD: algorand
+      POSTGRES_DB: indexerdb
+
+  indexer:
+    container_name: "falconer_ci_localnet_indexer"
+    image: algorand/indexer:3.10.0@sha256:a59088098c2386117550922a2876810dae133d4ba5cb50cdbf88b3c183f2fc4d
+    ports:
+      - 8980:8980
+    restart: unless-stopped
+    command: daemon --enable-all-parameters
+    environment:
+      INDEXER_POSTGRES_CONNECTION_STRING: "host=indexer-db port=5432 user=algorand password=algorand dbname=indexerdb sslmode=disable"
+    depends_on:
+      - conduit

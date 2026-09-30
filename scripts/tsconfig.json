@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "allowJs": true,
+    "checkJs": true,
+    // Real Node ESM entry points, not bundled input.
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "lib": ["ES2023"],
+    "types": ["node"]
+  },
+  // Scoped to the test harness and packaging scripts. The demo, recording and
+  // web smoke scripts are not type-checked.
+  "include": ["run-tests.mjs", "localnet-preflight.mjs", "package-check.mjs", "wasm-provenance.mjs"]
+}

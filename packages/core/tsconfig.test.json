@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    // The tests import the readiness probe, which is plain ESM JavaScript with
+    // JSDoc types so it can run before anything is built. Checking it here
+    // keeps the harness itself typed.
+    "allowJs": true,
+    "checkJs": true
+  },
+  "include": [
+    "src/**/*",
+    "test/**/*",
+    "vitest.config.ts",
+    "vitest.localnet.config.ts"
+  ]
+}

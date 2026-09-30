@@ -1,0 +1,122 @@
+# Hosted CI. What each job runs, and why, is in docs/LOCAL_TESTING.md.
+#
+# Pull-request code is untrusted: it runs on `pull_request` (never
+# `pull_request_target`) with a read-only token and no secrets, and checkout
+# does not leave the token behind for later steps. No job uses a secret.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  # A newer push to a pull request supersedes its run; runs on main finish.
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  offline:
+    name: Offline (${{ matrix.os }}, Node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025, macos-26]
+        # The floor of each supported line in package.json engines.
+        node: ['22.13.0', '24.0.0']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Toolchain versions
+        run: node --version && npm --version
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm test
+      - name: Built-page smoke (Chrome)
+        if: runner.os == 'Linux' && matrix.node == '22.13.0'
+        run: npm run test:web-smoke
+
+  localnet:
+    name: LocalNet integration (ubuntu-24.04, Node 24.21.0)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      COMPOSE_FILE: .github/localnet/docker-compose.yml
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24.21.0'
+      - name: Toolchain versions
+        run: node --version && npm --version && docker --version && docker compose version
+      - run: npm ci
+      # This job's own project on a fresh runner. Nothing resets or removes it:
+      # the runner is discarded with everything on it.
+      - name: Start the pinned LocalNet
+        run: docker compose up --detach --quiet-pull
+      - name: Wait for readiness
+        timeout-minutes: 5
+        run: |
+          until node scripts/localnet-preflight.mjs > "$RUNNER_TEMP/preflight.txt"; do sleep 5; done
+          cat "$RUNNER_TEMP/preflight.txt"
+          { echo '```'; cat "$RUNNER_TEMP/preflight.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - run: npm run test:localnet
+      - name: LocalNet diagnostics
+        if: failure()
+        run: |
+          cat "$RUNNER_TEMP/preflight.txt" || true
+          docker compose ps --all
+          docker compose logs --tail 50 --no-color
+
+  dependencies:
+    name: Dependency audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24.21.0'
+      # Nothing here runs the code, so no package's install script runs either.
+      - run: npm ci --ignore-scripts
+      - name: Known advisories (any severity fails)
+        run: npm audit
+      - name: Registry signatures and provenance
+        run: npm audit signatures
+
+  codeql:
+    name: CodeQL (javascript-typescript)
+    # CodeQL's terms allow it on public repositories and on private ones owned
+    # by an organisation with GitHub Advanced Security. While this repository
+    # is private and user-owned the job is skipped, which is not a pass.
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          languages: javascript-typescript
+          build-mode: none
+      - uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
