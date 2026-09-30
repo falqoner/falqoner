@@ -36,7 +36,8 @@ on any registry, although the manifests say `0.1.0`.
   app, some messages and the demo still use the development name, Falconer;
   see [Try It](README.md#try-it).
 - `falcon-1024`, which supplies the Falcon-1024 WebAssembly, declares no
-  license. See
+  license, and the terms of the Algorand extension to the Falcon C code it
+  compiles are unresolved. See
   [third-party notices](apps/web/public/THIRD_PARTY_NOTICES.md).
 - Searches are bounded, and application and logic-signature programs are not
   analysed. See [Limitations](README.md#limitations) and

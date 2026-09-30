@@ -57,6 +57,23 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ===========================(LICENSE END)=============================
 ```
 
+The package's build compiles all eleven C files at that commit. Ten of them,
+and the header files they share, carry the same MIT permission notice, naming
+the Falcon Project (2017-2019). The exceptions are `deterministic.c` and
+`deterministic.h`, which have no license header. They are Algorand's
+deterministic-signing extension, added in commit
+06b25d7bcac00793ada7224349ca20dfc0114fab, and `deterministic.c` defines the
+key-generation, signing and verification functions the package exports.
+`README.txt` credits the
+extension to David Lazar, "with input from Chris Peikert ... and others from
+Algorand, Inc." An upstream issue asks whether the Falcon Project's MIT license
+covers these additions
+([algorand/falcon#4](https://github.com/algorand/falcon/issues/4), open and
+unanswered since 2022-01-25). A pull request adding an MIT `LICENSE` file
+([algorand/falcon#11](https://github.com/algorand/falcon/pull/11)) is not
+merged (both checked 2026-09-30). The extension's terms are therefore
+unresolved.
+
 ### Emscripten 5.0.7
 
 Source: https://github.com/emscripten-core/emscripten, tag 5.0.7 (commit
@@ -178,7 +195,10 @@ above, with the license statement found there:
   `system/lib/libc/musl/src/errno/__errno_location.c`. musl: MIT, below.
 - `libc.a(emscripten_memcpy.o)`, `libc.a(emscripten_memcpy_bulkmem.o)`:
   `system/lib/libc/emscripten_memcpy.c` and `emscripten_memcpy_bulkmem.S`.
-  No file header; the nearest statement is Emscripten's `LICENSE` above.
+  No file header. Every author in their history is listed in Emscripten's
+  `AUTHORS`, which says: "Authors keep copyright of their contributions, of
+  course; they just grant a license to everyone to use it as detailed in
+  LICENSE." That is the `LICENSE` above.
 - `libc.a(emscripten_get_heap_size.o)`, `libdlmalloc.a(sbrk.o)`:
   `system/lib/libc/emscripten_get_heap_size.c` and `system/lib/libc/sbrk.c`.
   Header: The Emscripten Authors, MIT or NCSA, as above.
@@ -186,9 +206,13 @@ above, with the license statement found there:
   Header: "written by Doug Lea and released to the public domain, as
   explained at http://creativecommons.org/publicdomain/zero/1.0/".
 - `libcompiler_rt.a(stack_ops.o)`: `system/lib/compiler-rt/stack_ops.S`. No
-  file header. Emscripten added it (commit
-  deaa2cb4b4611fd7cdde7ba036b10cde188ff4d6); its directory also holds LLVM's
-  `LICENSE.TXT` (Apache License 2.0 with LLVM Exceptions).
+  file header. Emscripten added it as `stack_ops.s` (commit
+  deaa2cb4b4611fd7cdde7ba036b10cde188ff4d6) and renamed it (commit
+  528a6ab880f126095ce7f21644cec085971cf90c). Its authors are listed in
+  `AUTHORS`, as above. Its directory also holds LLVM's `LICENSE.TXT` (Apache
+  License 2.0 with LLVM Exceptions) for the compiler-rt code that
+  `system/lib/update_compiler_rt.py` imports into subdirectories. That
+  script does not import this file.
 
 musl, `system/lib/libc/musl/COPYRIGHT` at the same commit:
 

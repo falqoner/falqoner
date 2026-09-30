@@ -97,8 +97,11 @@ Falqoner's own code is MIT licensed: see `LICENSE`. This package does not
 include its dependencies. npm installs `algosdk`, `js-sha512` and
 `falcon-1024` from the registry under their own terms. `falcon-1024` 0.2.0,
 which provides the Falcon-1024 WebAssembly, declares no license in its
-package or its source repository. Its build compiles the Falcon Project's C
-code, which is published under the MIT license, with Emscripten 5.0.7.
+package or its source repository. Its build compiles, with Emscripten 5.0.7,
+the Falcon Project's C code, published under the MIT license, and Algorand's
+deterministic-signing extension to it, whose terms are unresolved: its files
+have no license header, and an upstream issue asking whether the MIT license
+covers them is unanswered.
 Falqoner rebuilt the WebAssembly from the package's source commit and got a
 byte-identical module. That shows where the code came from; it is not a
 license.
