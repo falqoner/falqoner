@@ -37,7 +37,7 @@ import {
   type AuthorityVerdict,
   type CoverageLine,
   type Finding,
-} from '@falconer/core';
+} from '@falqoner/core';
 
 /* ---------------------------------------------------------------- */
 
@@ -400,7 +400,7 @@ async function cmdScan(argv: string[]): Promise<number> {
   });
 
   const address = positionals[0];
-  if (!address) die('Usage: falconer scan <address> [--network testnet] [--deep]');
+  if (!address) die('Usage: falqoner scan <address> [--network testnet] [--deep]');
 
   // Checking a named list is exact and immediate, which is what an
   // operator who knows their own assets actually wants. Sweeping the
@@ -513,7 +513,7 @@ const KEYGEN_JSON_NOTICE =
 const KEYGEN_UNCHECKED =
   'the CLI has no command that reads a phrase back, and the web app checks ' +
   'only a key it generates itself. Use this address as a planning target ' +
-  '(falconer plan --to reads only), and rekey nothing to it unless you can ' +
+  '(falqoner plan --to reads only), and rekey nothing to it unless you can ' +
   'reproduce the key from what you wrote down.';
 
 async function cmdKeygen(argv: string[]): Promise<number> {
@@ -598,8 +598,8 @@ async function cmdPlan(argv: string[]): Promise<number> {
   });
 
   const address = positionals[0];
-  if (!address) die('Usage: falconer plan <address> --to <pq-address>');
-  if (!values.to) die('Missing --to <pq-address>. Generate one with: falconer keygen');
+  if (!address) die('Usage: falqoner plan <address> --to <pq-address>');
+  if (!values.to) die('Missing --to <pq-address>. Generate one with: falqoner keygen');
   // Refused before anything is read, like every other malformed argument. A
   // valid target that cannot hold post-quantum authority is the plan's
   // blocker to report, not a usage error.
@@ -743,7 +743,7 @@ async function cmdVerify(argv: string[]): Promise<number> {
   });
 
   const address = positionals[0];
-  if (!address) die('Usage: falconer verify <address> [-n network] [--compact] [--json]');
+  if (!address) die('Usage: falqoner verify <address> [-n network] [--compact] [--json]');
   const clients = clientsFor(network(values.network));
 
   // Report what the ledger alone establishes. The label must track the
@@ -813,7 +813,7 @@ async function cmdVerify(argv: string[]): Promise<number> {
 
 function cmdInspect(argv: string[]): number {
   const address = argv[0];
-  if (!address) die('Usage: falconer inspect <address>');
+  if (!address) die('Usage: falqoner inspect <address>');
   // A string that does not decode is not an on-curve address. Reporting it
   // as "a valid Ed25519 point" states something about a value that was
   // never a value.
@@ -844,7 +844,7 @@ function cmdInspect(argv: string[]): number {
 /* ---------------------------------------------------------------- */
 
 const USAGE = `
-  ${bold('falconer')} ${dim('- post-quantum readiness for Algorand')}
+  ${bold('falqoner')} ${dim('- post-quantum readiness for Algorand')}
 
   Read-only on every network, MainNet included: these commands never load
   a key or recovery phrase, sign, or submit a transaction.
@@ -956,6 +956,6 @@ async function dispatch(argv: string[]): Promise<number> {
       console.log(USAGE);
       return 0;
     default:
-      die(`Unknown command "${command}". Run: falconer help`);
+      die(`Unknown command "${command}". Run: falqoner help`);
   }
 }

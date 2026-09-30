@@ -24,7 +24,8 @@ git checkout <revision you were asked to test>   # or stay on the default branch
 git rev-parse HEAD   # quote this commit in every report
 ```
 
-The commands and packages still use the development name Falconer; see
+The command is `falqoner` and the packages are `@falqoner/*`. Some text, the
+demo and a few stored names still use the development name, Falconer; see
 [Try It](README.md#try-it).
 
 ## Set up and run it
@@ -56,7 +57,7 @@ something is not ready.
 | Path | What it is |
 | --- | --- |
 | `packages/core` | The engine the CLI and web app share: account and authority reading, exposure and coverage, Falcon-1024 keys, migration plans, budgets and the guarded migration ceremony |
-| `packages/cli` | The `falconer` command: read-only `scan`, `plan`, `verify` and `inspect`, and `keygen`, whose output is a secret |
+| `packages/cli` | The `falqoner` command: read-only `scan`, `plan`, `verify` and `inspect`, and `keygen`, whose output is a secret |
 | `apps/web` | The browser app: the audit, and the experimental TestNet/LocalNet migration |
 | `scripts` | The test runner, demo and recording, built-page smoke check and LocalNet readiness probe |
 

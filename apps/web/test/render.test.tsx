@@ -10,7 +10,7 @@
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import type { ReactElement } from 'react';
-import { analyzeAccount, assessAuthority, SCORE_SCOPE, type AccountExposure } from '@falconer/core';
+import { analyzeAccount, assessAuthority, SCORE_SCOPE, type AccountExposure } from '@falqoner/core';
 import { txid } from '../../../packages/core/test/fixtures';
 import {
   accountRecord,

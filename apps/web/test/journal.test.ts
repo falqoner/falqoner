@@ -15,7 +15,7 @@ import {
   prepareRekey,
   type AttemptEvidence,
   type TransactionAttempt,
-} from '@falconer/core';
+} from '@falqoner/core';
 import { LEDGER_GENESIS, scriptedLedger } from '../../../packages/core/test/scripted-ledger';
 import {
   JOURNAL_KEY,

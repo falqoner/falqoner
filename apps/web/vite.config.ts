@@ -6,7 +6,7 @@ export default defineConfig({
   resolve: {
     // Use the core package's TypeScript sources so the app and the engine
     // stay in lockstep without a build step between them.
-    alias: { '@falconer/core': new URL('../../packages/core/src/index.ts', import.meta.url).pathname },
+    alias: { '@falqoner/core': new URL('../../packages/core/src/index.ts', import.meta.url).pathname },
   },
   server: { port: 5173 },
   // Bundled packages' own license texts, beside public/THIRD_PARTY_NOTICES.md.

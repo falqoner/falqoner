@@ -6,7 +6,7 @@ import {
   preflight,
   type AccountExposure,
   type MigrationBudget,
-} from '@falconer/core';
+} from '@falqoner/core';
 import {
   STAGES,
   STAGE_LABEL,
@@ -388,7 +388,7 @@ function Ceremony({
               Execution from this page is limited to TestNet and LocalNet.
               On MainNet, sign the rekey in a wallet you trust, so the
               signing key never enters a browser. The{' '}
-              <span className="mono">falconer</span> CLI only inspects and
+              <span className="mono">falqoner</span> CLI only inspects and
               plans: it never signs or submits.
             </p>
           ) : (

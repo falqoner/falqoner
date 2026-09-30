@@ -9,6 +9,6 @@ export {
   genesisRefusal,
   pinClients,
   type NetworkGenesis as Genesis,
-} from '@falconer/core';
+} from '@falqoner/core';
 
 export type NetworkName = 'mainnet' | 'testnet' | 'localnet';

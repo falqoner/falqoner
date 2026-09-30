@@ -21,7 +21,7 @@ import {
   type FalconerClients,
   type PqIdentity,
   type TransactionAttempt,
-} from '@falconer/core';
+} from '@falqoner/core';
 import { fakeProvider } from '../../../packages/core/test/fake-provider';
 import {
   IDLE,

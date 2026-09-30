@@ -16,7 +16,7 @@
  * locally and it needs no private key. The on-curve addresses are fixed
  * points with no known private key.
  *
- * This module imports core's source files directly, never `@falconer/core`:
+ * This module imports core's source files directly, never `@falqoner/core`:
  * the dispatch tests mock that specifier, and this is where the mock's traps
  * come from.
  */

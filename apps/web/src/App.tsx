@@ -5,7 +5,7 @@ import {
   clientsFor,
   riskVerdict,
   type AccountExposure,
-} from '@falconer/core';
+} from '@falqoner/core';
 import {
   Mark,
   Verdict,

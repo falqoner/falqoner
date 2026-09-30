@@ -9,7 +9,7 @@
     "checkJs": true,
     // Type the tests against core's source, as vitest runs them, so a
     // typecheck never depends on a stale or missing core build.
-    "paths": { "@falconer/core": ["../core/src/index.ts"] }
+    "paths": { "@falqoner/core": ["../core/src/index.ts"] }
   },
   "include": ["src/**/*", "test/**/*", "vitest.config.ts"]
 }

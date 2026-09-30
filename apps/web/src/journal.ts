@@ -51,7 +51,7 @@ import {
   type NetworkGenesis,
   type SubmissionStage,
   type TransactionAttempt,
-} from '@falconer/core';
+} from '@falqoner/core';
 
 export { STAGE_ORDER, isFinalEvidence };
 

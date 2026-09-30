@@ -1,5 +1,5 @@
 {
-  "name": "@falconer/cli",
+  "name": "@falqoner/cli",
   "version": "0.1.0",
   "description": "Post-quantum readiness CLI for Algorand: read-only inspection and migration planning",
   "license": "MIT",
@@ -17,7 +17,7 @@
     "node": "^22.13.0 || ^24.0.0"
   },
   "bin": {
-    "falconer": "./dist/index.js"
+    "falqoner": "./dist/index.js"
   },
   "files": [
     "dist"
@@ -29,7 +29,7 @@
     "test:unit": "vitest run --config vitest.config.ts"
   },
   "dependencies": {
-    "@falconer/core": "*"
+    "@falqoner/core": "*"
   },
   "devDependencies": {
     "algosdk": "^3.7.0",

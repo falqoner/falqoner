@@ -31,14 +31,14 @@ A crypto account has a key. Whoever holds the key controls the account.
 
 The catch is that a key can control far more than the money sitting in it. On Algorand the same key might also be able to **freeze a currency**, **reconfigure administrators**, or **run a smart contract that holds other people's funds**. None of that shows up in a balance.
 
-So *"this account only has dust in it, it does not matter"* can be badly wrong. The example above was real when read from MainNet on 2026-09-21: account [`37XL3M57AXBUJARWMT5R7M35OERXMH3Q22JMMEFLBYNDXXADGFN625HAL4`](https://allo.info/account/37XL3M57AXBUJARWMT5R7M35OERXMH3Q22JMMEFLBYNDXXADGFN625HAL4) held **0.299 ALGO**, held no tokens, and had created no assets — yet it was the active **manager of USDC** (asset `31566704`). Its address is off the Ed25519 curve, so it is a multisig, logic-signature, application or post-quantum address, not a bare Ed25519 key: `falconer inspect` shows that offline, and only a ledger record can say which. The chain can change: `npm run demo -- --live` reads public MainNet again, and what it prints is whatever the ledger says then.
+So *"this account only has dust in it, it does not matter"* can be badly wrong. The example above was real when read from MainNet on 2026-09-21: account [`37XL3M57AXBUJARWMT5R7M35OERXMH3Q22JMMEFLBYNDXXADGFN625HAL4`](https://allo.info/account/37XL3M57AXBUJARWMT5R7M35OERXMH3Q22JMMEFLBYNDXXADGFN625HAL4) held **0.299 ALGO**, held no tokens, and had created no assets — yet it was the active **manager of USDC** (asset `31566704`). Its address is off the Ed25519 curve, so it is a multisig, logic-signature, application or post-quantum address, not a bare Ed25519 key: `falqoner inspect` shows that offline, and only a ledger record can say which. The chain can change: `npm run demo -- --live` reads public MainNet again, and what it prints is whatever the ledger says then.
 
 Falqoner answers two questions about any Algorand account:
 
 1. **If someone compromised this key, what could they actually do, and to whom?**
 2. **Has this account rotated to a quantum-resistant Falcon-1024 signature, and what evidence establishes that?**
 
-Answering them only reads public ledger data: the audit in the web app, and the CLI's `scan`, `plan`, `verify` and `inspect`, never ask for a key or recovery phrase, sign, or submit anything, on any network. Secrets appear in exactly two places, both explicit. `falconer keygen` prints a new recovery phrase, and the web app's migration panel generates one in the page and, on TestNet and LocalNet only, asks for the 25-word phrase of the key that signs the rekey. See [Auditing vs. Signing](#auditing-vs-signing).
+Answering them only reads public ledger data: the audit in the web app, and the CLI's `scan`, `plan`, `verify` and `inspect`, never ask for a key or recovery phrase, sign, or submit anything, on any network. Secrets appear in exactly two places, both explicit. `falqoner keygen` prints a new recovery phrase, and the web app's migration panel generates one in the page and, on TestNet and LocalNet only, asks for the 25-word phrase of the key that signs the rekey. See [Auditing vs. Signing](#auditing-vs-signing).
 
 ---
 
@@ -46,7 +46,7 @@ Answering them only reads public ledger data: the audit in the web app, and the 
 
 Testing an invitation, or contributing? Start with [CONTRIBUTING.md](CONTRIBUTING.md): which revision to check out, the checks to run, and how to report a problem.
 
-**Names.** Falqoner is the project's public name. Until a separate rename, the software keeps its development name, Falconer: the `falconer` command, the `@falconer/*` workspace packages, the web app's title and the demo images all use it. Packages named `falconer` or `@falconer/...` on the public npm registry belong to other projects, so do not install anything by those names from it.
+**Names.** Falqoner is the project's public name. The command is `falqoner`, and the workspace packages are `@falqoner/core`, `@falqoner/cli` and `@falqoner/web`. None of them is published to a package registry. The development name, Falconer, remains in a few places until a later refresh: the web app's title and text, messages such as "not verified by Falconer", the demo script and its recordings (which show `$ falconer`), and core's `FalconerClients` type. The browser's migration record and tab lock also keep their names, so a record saved before the rename still resumes. Packages named `falconer` or `@falconer/...` on the public npm registry belong to other projects, so do not install anything by those names from it.
 
 Both options need Node 22.13+ or Node 24, with the npm it ships ([toolchain](docs/LOCAL_TESTING.md#toolchain)).
 
@@ -246,10 +246,10 @@ Changes to `scan --json` for consumers:
 ## Architecture & Philosophy
 
 ```
-falconer/
+falqoner/
 ├── packages/
 │   ├── core/           # Audit engine, graph crawler, Falcon cryptography & pre-flight
-│   └── cli/            # The `falconer` CLI, with CI exit codes & JSON output
+│   └── cli/            # The `falqoner` CLI, with CI exit codes & JSON output
 ├── apps/
 │   └── web/            # Client-only browser dashboard with in-WASM Falcon-1024
 ├── scripts/
@@ -263,7 +263,7 @@ falconer/
 
 ### Auditing vs. Signing
 - **Auditing belongs in the CLI and CI:** Scanning, risk scoring, planning, and gating run cleanly in developer terminals. `scan`, `plan`, `verify` and `inspect` only read, on every network, and never load a key or recovery phrase, sign, or submit. An audit that never needs your signing key has nothing to lose on your behalf.
-- **Secrets are handled in two explicit places:** `falconer keygen` prints a new recovery phrase, and its output, JSON included, is a secret. The web app's migration panel generates a Falcon key and its phrase in the page and, on TestNet and LocalNet, takes the 25-word phrase of the key that signs the rekey; neither phrase leaves the page's memory, and only signed transactions are sent. The page keeps a public record of each transaction in browser storage for recovery after a reload, and nothing secret is ever written there.
+- **Secrets are handled in two explicit places:** `falqoner keygen` prints a new recovery phrase, and its output, JSON included, is a secret. The web app's migration panel generates a Falcon key and its phrase in the page and, on TestNet and LocalNet, takes the 25-word phrase of the key that signs the rekey; neither phrase leaves the page's memory, and only signed transactions are sent. The page keeps a public record of each transaction in browser storage for recovery after a reload, and nothing secret is ever written there.
 - **MainNet signing belongs in your wallet:** The CLI accepts no signing key on any network. The web app offers execution only on TestNet and LocalNet, and warns never to paste a MainNet phrase into a web page: a phrase is the same key on every network. `plan` takes public addresses only and prints the steps, blockers and budget as text or JSON. That is a description, not a transaction: nothing Falqoner prints can be imported into or signed by a wallet. A MainNet migration means building and signing each step with wallet tooling you trust, after confirming on TestNet that it can sign the rekey and then sign with the Falcon key.
 
 ---

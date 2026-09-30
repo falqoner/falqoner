@@ -17,7 +17,7 @@ export default defineConfig({
   resolve: {
     alias: {
       // The same core source the app itself builds against (vite.config.ts).
-      '@falconer/core': fileURLToPath(
+      '@falqoner/core': fileURLToPath(
         new URL('../../packages/core/src/index.ts', import.meta.url),
       ),
     },

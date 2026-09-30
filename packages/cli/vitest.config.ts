@@ -7,7 +7,7 @@ import { defineConfig } from 'vitest/config';
  *
  * Two kinds of test run here. Dispatch tests call the CLI in-process against
  * a deterministic fake ledger, with traps on recovery-phrase access, signing
- * and submission. Executable tests run the built `falconer` binary as a
+ * and submission. Executable tests run the built `falqoner` binary as a
  * subprocess with network and environment traps preloaded. Neither contacts a
  * node, so the suite passes with Docker and LocalNet absent.
  */
@@ -16,7 +16,7 @@ export default defineConfig({
     alias: {
       // In-process tests run against core's source, so a stale core build can
       // never stand in for the code under test.
-      '@falconer/core': fileURLToPath(
+      '@falqoner/core': fileURLToPath(
         new URL('../core/src/index.ts', import.meta.url),
       ),
     },

@@ -1,5 +1,5 @@
 {
-  "name": "@falconer/web",
+  "name": "@falqoner/web",
   "version": "0.1.0",
   "private": true,
   "description": "Client-side Falqoner dashboard: exposure audit and LocalNet/TestNet migration",
@@ -26,7 +26,7 @@
     "test:unit": "vitest run --config vitest.config.ts"
   },
   "dependencies": {
-    "@falconer/core": "*",
+    "@falqoner/core": "*",
     "algosdk": "^3.7.0",
     "falcon-1024": "^0.2.0",
     "react": "^18.3.1",

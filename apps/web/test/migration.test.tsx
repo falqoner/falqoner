@@ -16,8 +16,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import algosdk from 'algosdk';
-import type * as Core from '@falconer/core';
-import type { AccountExposure, PqIdentity } from '@falconer/core';
+import type * as Core from '@falqoner/core';
+import type { AccountExposure, PqIdentity } from '@falqoner/core';
 
 const mocks = vi.hoisted(() => ({
   analyzeAccount: vi.fn(),
@@ -26,7 +26,7 @@ const mocks = vi.hoisted(() => ({
   preflight: vi.fn(),
 }));
 
-vi.mock('@falconer/core', async (importOriginal) => ({
+vi.mock('@falqoner/core', async (importOriginal) => ({
   ...(await importOriginal<typeof Core>()),
   ...mocks,
 }));

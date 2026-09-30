@@ -81,7 +81,7 @@ import {
   type MigrationPlan,
   type PqIdentity,
   type TransactionAttempt,
-} from '@falconer/core';
+} from '@falqoner/core';
 import {
   attemptsFor,
   browserJournal,

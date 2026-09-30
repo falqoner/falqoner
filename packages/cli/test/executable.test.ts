@@ -1,5 +1,5 @@
 /**
- * The built `falconer` executable, run as a real subprocess (SAFE-01).
+ * The built `falqoner` executable, run as a real subprocess (SAFE-01).
  *
  * The suite's global setup builds core and the CLI first, so this runs the
  * current source. Every process starts with `offline-trap.mjs` preloaded,
@@ -46,7 +46,7 @@ interface Run {
   trapped: string[];
 }
 
-async function falconer(
+async function falqoner(
   args: string[],
   {
     env = {},
@@ -111,7 +111,7 @@ it('runs a build of the current source', () => {
 describe('the traps are armed', () => {
   it('records the environment reads the CLI does make', async () => {
     // The CLI reads NO_COLOR at startup to choose its output style.
-    const r = await falconer(['help'], { trapEnv: ['NO_COLOR'] });
+    const r = await falqoner(['help'], { trapEnv: ['NO_COLOR'] });
     expect(r.status).toBe(0);
     expect(r.trapped).toContain('env get NO_COLOR');
   });
@@ -126,7 +126,7 @@ describe('the traps are armed', () => {
   ];
 
   it.each(ROUTES)('refuses the first read %s makes, a GET to %s', async (_name, args, origin) => {
-    const r = await falconer(args);
+    const r = await falqoner(args);
     // The refused read ends the command, as an unreachable provider would.
     expect(r.status).toBe(1);
     expect(r.stderr).toContain('offline trap: network request refused');
@@ -150,7 +150,7 @@ describe('the removed --mnemonic-env option', () => {
   it.each(FORMS)(
     'is refused %s: exit 1, no environment read, no request, nothing echoed',
     async (_name, args) => {
-      const r = await falconer(args, {
+      const r = await falqoner(args, {
         env: { [PHRASE_VAR]: SENTINEL },
         trapEnv: [PHRASE_VAR],
       });
@@ -167,9 +167,9 @@ describe('the removed --mnemonic-env option', () => {
 
 describe('help and usage', () => {
   it.each([{ args: ['help'] }, { args: ['--help'] }, { args: ['-h'] }, { args: [] }])(
-    'falconer $args prints the usage and exits 0',
+    'falqoner $args prints the usage and exits 0',
     async ({ args }) => {
-      const r = await falconer(args);
+      const r = await falqoner(args);
       expect(r.status).toBe(0);
       expect(r.stderr).toBe('');
       expect(r.trapped).toEqual([]);
@@ -202,8 +202,8 @@ describe('help and usage', () => {
   );
 
   const USAGE_ERRORS: Array<[string, string[], string]> = [
-    ['migrate, which is not a command', ['migrate', ADDRESS], 'Unknown command "migrate". Run: falconer help'],
-    ['verify without an address', ['verify'], 'Usage: falconer verify <address> [-n network] [--compact] [--json]'],
+    ['migrate, which is not a command', ['migrate', ADDRESS], 'Unknown command "migrate". Run: falqoner help'],
+    ['verify without an address', ['verify'], 'Usage: falqoner verify <address> [-n network] [--compact] [--json]'],
     ['an unknown network', ['verify', ADDRESS, '--network', 'betanet'], 'Unknown network "betanet"'],
     ['an option scan never had', ['scan', ADDRESS, '--mnemonic-env', PHRASE_VAR], "Unknown option '--mnemonic-env'"],
     ['a plan without --to', ['plan', ADDRESS], 'Missing --to <pq-address>'],
@@ -217,7 +217,7 @@ describe('help and usage', () => {
   // The fixture ledger stands ready to answer, so an empty record shows the
   // input was refused before anything was asked, not that nothing could be.
   it.each(USAGE_ERRORS)('%s exits 1 before any request', async (_name, args, message) => {
-    const r = await falconer(args, { fixture: true });
+    const r = await falqoner(args, { fixture: true });
     expect(r.status).toBe(1);
     expect(r.stdout).toBe('');
     expect(r.stderr).toContain(`error  ${message}`);
@@ -226,8 +226,8 @@ describe('help and usage', () => {
 
   it('inspect runs offline, exits 0 for either shape, and calls neither a verdict', async () => {
     const [on, off] = await Promise.all([
-      falconer(['inspect', ADDRESS]),
-      falconer(['inspect', FIXTURE.multisig]),
+      falqoner(['inspect', ADDRESS]),
+      falqoner(['inspect', FIXTURE.multisig]),
     ]);
     for (const r of [on, off]) {
       expect(r.status).toBe(0);
@@ -248,8 +248,8 @@ describe('help and usage', () => {
  * `fixture GET`; anything else is still recorded and refused.
  */
 describe.concurrent('against a fixed ledger', () => {
-  const fx = (args: string[], options: Parameters<typeof falconer>[1] = {}) =>
-    falconer([...args, '-n', 'localnet'], { ...options, fixture: true });
+  const fx = (args: string[], options: Parameters<typeof falqoner>[1] = {}) =>
+    falqoner([...args, '-n', 'localnet'], { ...options, fixture: true });
   /** Everything the run asked for, the fixture answered, and all of it was a read. */
   const onlyServedReads = (r: Run) => {
     expect(r.trapped.length).toBeGreaterThan(0);
@@ -468,7 +468,7 @@ describe('keygen, the one command that prints a secret', () => {
     expect(text.includes(needle), `${label} should include "${needle}"`).toBe(true);
 
   it('prints the phrase with secret-output guidance, and nothing leaves the process', async () => {
-    const r = await falconer(['keygen']);
+    const r = await falqoner(['keygen']);
     expect(r.status, 'keygen exit status').toBe(0);
     expect(r.trapped, 'network and environment traps').toEqual([]);
     expectIn(r.stdout, 'Recovery phrase (25 words, secret)', 'stdout');
@@ -477,12 +477,12 @@ describe('keygen, the one command that prints a secret', () => {
     // Only a workflow that exists: no command reads a phrase back (PQ-04).
     expectIn(flat(r.stdout), 'Nothing has checked what you wrote down, and Falconer cannot:', 'stdout');
     expectIn(flat(r.stdout), 'the CLI has no command that reads a phrase back', 'stdout');
-    expectIn(flat(r.stdout), 'falconer plan --to reads only', 'stdout');
+    expectIn(flat(r.stdout), 'falqoner plan --to reads only', 'stdout');
     expect(flat(r.stdout).includes('type the phrase back'), 'advises a check that does not exist').toBe(false);
   });
 
   it('--json keeps stdout parseable and warns on stderr, which never carries the phrase', async () => {
-    const r = await falconer(['keygen', '--json']);
+    const r = await falqoner(['keygen', '--json']);
     expect(r.status, 'keygen --json exit status').toBe(0);
     expect(r.trapped, 'network and environment traps').toEqual([]);
     let parsed: Record<string, unknown>;

@@ -16,7 +16,7 @@
  */
 import { createHash } from 'node:crypto';
 import algosdk from 'algosdk';
-import { classifyAddressShape, derivePqAddress, NETWORKS } from '@falconer/core';
+import { classifyAddressShape, derivePqAddress, NETWORKS } from '@falqoner/core';
 
 /** @typedef {'on-curve' | 'off-curve'} Shape */
 

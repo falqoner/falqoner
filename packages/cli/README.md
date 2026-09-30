@@ -1,6 +1,6 @@
-# @falconer/cli
+# @falqoner/cli
 
-`falconer`, post-quantum readiness checks for Algorand accounts in a terminal
+`falqoner`, post-quantum readiness checks for Algorand accounts in a terminal
 or a CI pipeline: what a key controls, whether an account's authority is
 established as post-quantum, and what migrating it would take.
 
@@ -10,19 +10,19 @@ established as post-quantum, and what migrating it would take.
 ## Install
 
 Packages named `@falconer/...` or `falconer` on the public npm registry are
-other projects, and `@falconer/cli` there also installs a `falconer` command.
-Build both tarballs from a checkout of the Falqoner repository and install the
-two files together, because this package depends on `@falconer/core`:
+other projects. Build both tarballs from a checkout of the Falqoner repository
+and install the two files together, because this package depends on
+`@falqoner/core`:
 
 ```bash
 npm ci && npm run build
-npm pack -w @falconer/core -w @falconer/cli
+npm pack -w @falqoner/core -w @falqoner/cli
 # then, in your own project:
-npm install /path/to/falconer-core-0.1.0.tgz /path/to/falconer-cli-0.1.0.tgz
-npx --no falconer help
+npm install /path/to/falqoner-core-0.1.0.tgz /path/to/falqoner-cli-0.1.0.tgz
+npx --no falqoner help
 ```
 
-`--no` stops npx from downloading a different package if `falconer` is not
+`--no` stops npx from downloading a different package if `falqoner` is not
 installed. Node 22.13+ or Node 24.
 
 ## Commands
@@ -32,11 +32,11 @@ installed. Node 22.13+ or Node 24.
 submit a transaction. There is no migrate command.
 
 ```bash
-falconer scan <address> [-n network] [--assets ids] [--apps ids] [--deep] [--json] [--fail-on band]
-falconer plan <address> --to <pq-address> [-n network] [--json]
-falconer verify <address> [-n network] [--json]
-falconer inspect <address>
-falconer keygen [--json]
+falqoner scan <address> [-n network] [--assets ids] [--apps ids] [--deep] [--json] [--fail-on band]
+falqoner plan <address> --to <pq-address> [-n network] [--json]
+falqoner verify <address> [-n network] [--json]
+falqoner inspect <address>
+falqoner keygen [--json]
 ```
 
 - `scan` maps what a key controls, scores the exposure and states what each
@@ -52,7 +52,7 @@ falconer keygen [--json]
   output is secret**: anyone who reads it controls the account. Keep it out of
   logs, CI and shared terminals.
 
-`falconer help` lists every option and exit code. `--json` prints JSON alone
+`falqoner help` lists every option and exit code. `--json` prints JSON alone
 on stdout. Usage errors and failed reads exit 1.
 
 ## Limits
@@ -67,4 +67,4 @@ no signing key.
 
 Falqoner's own code is MIT licensed: see `LICENSE`. This package does not
 include its dependencies, which npm installs under their own terms; see the
-`@falconer/core` README for the Falcon-1024 dependency.
+`@falqoner/core` README for the Falcon-1024 dependency.

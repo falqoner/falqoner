@@ -1,4 +1,4 @@
-# @falconer/core
+# @falqoner/core
 
 The engine behind Falqoner, post-quantum readiness for Algorand. It maps what
 an Ed25519 key controls and scores that exposure, reports what ledger records
@@ -18,9 +18,9 @@ install that file:
 
 ```bash
 npm ci && npm run build
-npm pack -w @falconer/core
+npm pack -w @falqoner/core
 # then, in your own project:
-npm install /path/to/falconer-core-0.1.0.tgz
+npm install /path/to/falqoner-core-0.1.0.tgz
 ```
 
 Node 22.13+ or Node 24. The package is ESM only.
@@ -30,7 +30,7 @@ Node 22.13+ or Node 24. The package is ESM only.
 Offline, with no provider:
 
 ```js
-import { classifyAddressShape, generatePqIdentity, selfTestIdentity } from '@falconer/core';
+import { classifyAddressShape, generatePqIdentity, selfTestIdentity } from '@falqoner/core';
 
 // 'on-curve', 'off-curve' or 'invalid': a shape, never a verdict.
 classifyAddressShape(address);
@@ -46,7 +46,7 @@ selfTestIdentity(identity);
 Reading a network. This only reads: nothing is signed or sent.
 
 ```js
-import { analyzeAccount, clientsFor, riskVerdict } from '@falconer/core';
+import { analyzeAccount, clientsFor, riskVerdict } from '@falqoner/core';
 
 const exposure = await analyzeAccount(clientsFor('mainnet'), address);
 riskVerdict(exposure.risk); // headline, score, and whether nothing exposed was found
@@ -54,8 +54,8 @@ exposure.authority;         // what the provider's records establish, and on wha
 exposure.coverage;          // what each check covered
 ```
 
-The other exports are typed in the bundled `.d.ts` files. The `falconer` CLI
-(`@falconer/cli`) and the web app in the Falqoner repository are the
+The other exports are typed in the bundled `.d.ts` files. The `falqoner` CLI
+(`@falqoner/cli`) and the web app in the Falqoner repository are the
 reference callers.
 
 The web app migrates through `openCeremony`, the one supported way to run a

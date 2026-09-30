@@ -32,8 +32,9 @@ on any registry, although the manifests say `0.1.0`.
 
 ### Limits
 
-- The software still uses its development name, Falconer, in its command,
-  packages, web app and demo images; see [Try It](README.md#try-it).
+- The command is `falqoner` and the packages are `@falqoner/*`, but the web
+  app, some messages and the demo still use the development name, Falconer;
+  see [Try It](README.md#try-it).
 - `falcon-1024`, which supplies the Falcon-1024 WebAssembly, declares no
   license. See
   [third-party notices](apps/web/public/THIRD_PARTY_NOTICES.md).

@@ -4,7 +4,7 @@ import type {
   AuthorityEdge,
   AuthorityVerdict,
   Finding,
-} from '@falconer/core';
+} from '@falqoner/core';
 import {
   authorityVerdict,
   coverageLines,
@@ -12,7 +12,7 @@ import {
   formatAlgos,
   riskVerdict,
   SCORE_SCOPE,
-} from '@falconer/core';
+} from '@falqoner/core';
 
 const BAND_COLOR: Record<string, string> = {
   critical: 'var(--critical)',

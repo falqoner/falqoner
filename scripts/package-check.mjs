@@ -4,16 +4,15 @@
  *
  * Builds core and the CLI, packs both into a scratch directory and installs
  * the two tarballs into a fresh consumer outside the workspace, so nothing can
- * resolve through a workspace link. The public npm registry has an unrelated
- * `@falconer/cli`, and any `@falconer` name could resolve there, so the
- * consumer's lockfile must show
+ * resolve through a workspace link. A registry package by either name could
+ * otherwise resolve in its place, so the consumer's lockfile must show
  * that each package came from its own tarball and that `falcon-1024` is the
  * locked release whose provenance was checked.
  *
  * In the consumer it then checks that each package ships its README and the
  * project's LICENSE, and nothing outside `dist`; that core imports and signs
  * and verifies with Falcon-1024 in memory, which runs the embedded
- * WebAssembly and prints no key; that the `falconer` bin prints help; and
+ * WebAssembly and prints no key; that the `falqoner` bin prints help; and
  * that `verify` passes against the CLI's fixed ledger with its offline traps
  * loaded, which refuse any other request.
  *
@@ -35,7 +34,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CLI_TEST = path.join(ROOT, 'packages', 'cli', 'test');
 /** Where each package lives in the workspace. */
-const PACKAGES = { '@falconer/core': 'packages/core', '@falconer/cli': 'packages/cli' };
+const PACKAGES = { '@falqoner/core': 'packages/core', '@falqoner/cli': 'packages/cli' };
 /** Every packed path must be one of these or under `dist/`. */
 const ALWAYS = ['package.json', 'README.md', 'LICENSE'];
 
@@ -72,7 +71,7 @@ const sha256 = (/** @type {string} */ file) =>
 const text = (/** @type {string} */ file) => readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
 
 // 1. Build and pack the current source.
-npm('build', ['run', 'build', '-w', '@falconer/core', '-w', '@falconer/cli'], ROOT);
+npm('build', ['run', 'build', '-w', '@falqoner/core', '-w', '@falqoner/cli'], ROOT);
 /** @type {Array<{ name: string, filename: string, integrity: string, files: Array<{ path: string }> }>} */
 const packed = JSON.parse(
   npm('pack', ['pack', '--json', '--pack-destination', scratch,
@@ -145,11 +144,11 @@ console.log(`consumer: both packages from their tarballs; falcon-1024 ${falcon.v
 
 // 4. Core runs from the consumer: Falcon-1024 through the embedded WebAssembly.
 const probe = `
-import { classifyAddressShape, generatePqIdentity, selfTestIdentity } from '@falconer/core';
+import { classifyAddressShape, generatePqIdentity, selfTestIdentity } from '@falqoner/core';
 const a = generatePqIdentity();
 const b = generatePqIdentity();
 console.log(JSON.stringify({
-  core: import.meta.resolve('@falconer/core'),
+  core: import.meta.resolve('@falqoner/core'),
   falcon: import.meta.resolve('falcon-1024'),
   shape: classifyAddressShape(a.address),
   signs: selfTestIdentity(a),
@@ -160,7 +159,7 @@ const within = (/** @type {string} */ url, /** @type {string} */ name) =>
   realpathSync(fileURLToPath(url)).startsWith(
     realpathSync(path.join(consumer, 'node_modules', ...name.split('/'))) + path.sep,
   );
-if (!within(core.core, '@falconer/core') || !within(core.falcon, 'falcon-1024')) {
+if (!within(core.core, '@falqoner/core') || !within(core.falcon, 'falcon-1024')) {
   fail(`core or falcon-1024 did not load from the consumer: ${core.core} ${core.falcon}`);
 }
 if (core.shape !== 'off-curve' || core.signs !== true || core.rejectsOtherKey !== true) {
@@ -169,12 +168,12 @@ if (core.shape !== 'off-curve' || core.signs !== true || core.rejectsOtherKey !=
 console.log('core: imported; a Falcon-1024 key signs and verifies, and another key is rejected');
 
 // 5. The CLI's bin, and a fixed-ledger command with the offline traps loaded.
-const cliDir = path.join(consumer, 'node_modules', '@falconer', 'cli');
-const bin = path.join(cliDir, JSON.parse(readFileSync(path.join(cliDir, 'package.json'), 'utf8')).bin.falconer);
-if (!existsSync(path.join(consumer, 'node_modules', '.bin', 'falconer'))) fail('npm linked no falconer bin');
-if (!readFileSync(bin, 'utf8').startsWith('#!/usr/bin/env node\n')) fail('the falconer bin has no node shebang');
-if (!node('falconer help', [bin, 'help'], { cwd: consumer }).includes('falconer - post-quantum readiness')) {
-  fail('falconer help did not print the command reference');
+const cliDir = path.join(consumer, 'node_modules', '@falqoner', 'cli');
+const bin = path.join(cliDir, JSON.parse(readFileSync(path.join(cliDir, 'package.json'), 'utf8')).bin.falqoner);
+if (!existsSync(path.join(consumer, 'node_modules', '.bin', 'falqoner'))) fail('npm linked no falqoner bin');
+if (!readFileSync(bin, 'utf8').startsWith('#!/usr/bin/env node\n')) fail('the falqoner bin has no node shebang');
+if (!node('falqoner help', [bin, 'help'], { cwd: consumer }).includes('falqoner - post-quantum readiness')) {
+  fail('falqoner help did not print the command reference');
 }
 
 for (const file of ['offline-trap.mjs', 'fixture-ledger.mjs']) {
@@ -186,7 +185,7 @@ const trapLog = path.join(consumer, 'trap.log');
 /** @type {NodeJS.ProcessEnv} */
 const env = { ...process.env, NO_COLOR: '1', FALCONER_FIXTURE: '1', FALCONER_TRAP_LOG: trapLog };
 delete env.NODE_OPTIONS;
-const verdict = JSON.parse(node('falconer verify on the fixed ledger', [
+const verdict = JSON.parse(node('falqoner verify on the fixed ledger', [
   '--import', pathToFileURL(path.join(consumer, 'offline-trap.mjs')).href,
   bin, 'verify', FIXTURE.postQuantum, '--network', 'localnet', '--json',
 ], { cwd: consumer, env }));

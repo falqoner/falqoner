@@ -44,14 +44,14 @@ import {
   type NetworkName,
 } from './fake-ledger.js';
 
-vi.mock('@falconer/core', async (importOriginal) => {
+vi.mock('@falqoner/core', async (importOriginal) => {
   const real = await importOriginal<Record<string, unknown>>();
   const ledger = await import('./fake-ledger.js');
   const traps: Record<string, unknown> = {};
   for (const name of ledger.FORBIDDEN_CORE) {
     // A trap for a name core no longer exports would guard nothing.
     if (typeof real[name] !== 'function') {
-      throw new Error(`@falconer/core no longer exports ${name}; update FORBIDDEN_CORE`);
+      throw new Error(`@falqoner/core no longer exports ${name}; update FORBIDDEN_CORE`);
     }
     traps[name] = ledger.forbidden(`core.${name}`);
   }
@@ -579,7 +579,7 @@ describe('the removed --mnemonic-env option', () => {
 
 describe('usage errors exit 1 before any provider is read', () => {
   const USAGE_ERRORS: Array<[string, string[], string]> = [
-    ['verify without an address', ['verify'], 'Usage: falconer verify <address>'],
+    ['verify without an address', ['verify'], 'Usage: falqoner verify <address>'],
     [
       'an unknown network',
       ['verify', ACCOUNTS.classical, '--network', 'betanet'],
@@ -604,7 +604,7 @@ describe('usage errors exit 1 before any provider is read', () => {
     ],
     ['migrate, which is not a command', ['migrate', ACCOUNTS.classical], 'Unknown command "migrate"'],
     ['an unknown command', ['frobnicate'], 'Unknown command "frobnicate"'],
-    ['inspect without an address', ['inspect'], 'Usage: falconer inspect <address>'],
+    ['inspect without an address', ['inspect'], 'Usage: falqoner inspect <address>'],
     ['inspect of an invalid address', ['inspect', 'not-an-address'], 'Not a valid Algorand address'],
   ];
 

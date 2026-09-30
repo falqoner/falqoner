@@ -19,8 +19,8 @@ import {
   type AccountExposure,
   type FalconerClients,
   type PqIdentity,
-} from '@falconer/core';
-// The real scan, from its own module: the test files mock it on '@falconer/core'.
+} from '@falqoner/core';
+// The real scan, from its own module: the test files mock it on '@falqoner/core'.
 import { analyzeAccount as realAnalyze } from '../../../packages/core/src/exposure';
 import { fakeProvider } from '../../../packages/core/test/fake-provider';
 import { scriptedLedger, type ScriptedLedger } from '../../../packages/core/test/scripted-ledger';

@@ -15,8 +15,8 @@
  * would show, and that storage never held a secret.
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import type * as Core from '@falconer/core';
-import type { AccountExposure, PqIdentity } from '@falconer/core';
+import type * as Core from '@falqoner/core';
+import type { AccountExposure, PqIdentity } from '@falqoner/core';
 
 const mocks = vi.hoisted(() => ({
   analyzeAccount: vi.fn(),
@@ -25,13 +25,13 @@ const mocks = vi.hoisted(() => ({
   preflight: vi.fn(),
 }));
 
-vi.mock('@falconer/core', async (importOriginal) => ({
+vi.mock('@falqoner/core', async (importOriginal) => ({
   ...(await importOriginal<typeof Core>()),
   ...mocks,
 }));
 
 import algosdk from 'algosdk';
-import { VALIDITY_ROUNDS } from '@falconer/core';
+import { VALIDITY_ROUNDS } from '@falqoner/core';
 import type { Stage } from '../src/operation';
 import { JOURNAL_KEY, browserJournal, serializeRecord, parseRecord } from '../src/journal';
 import {

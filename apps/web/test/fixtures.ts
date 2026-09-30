@@ -15,7 +15,7 @@ import {
   type AttemptEvidence,
   type PqIdentity,
   type TransactionAttempt,
-} from '@falconer/core';
+} from '@falqoner/core';
 import { falconAuthority } from '../../../packages/core/test/fake-provider';
 import { scriptedLedger } from '../../../packages/core/test/scripted-ledger';
 

@@ -67,7 +67,7 @@ Core's lower-level functions are for tests and tooling, not a supported migratio
 ## Secrets
 
 - **Read-only paths.** The CLI's `scan`, `plan`, `verify` and `inspect`, and the web app's audit and plan, never ask for a phrase or key and never sign or submit, on any network.
-- **`falconer keygen` prints a secret.** Its output, JSON included, contains a recovery phrase. Do not run it where output is logged, such as CI, a shared terminal or a recording.
+- **`falqoner keygen` prints a secret.** Its output, JSON included, contains a recovery phrase. Do not run it where output is logged, such as CI, a shared terminal or a recording.
 - **The web migration handles secrets.** It shows a newly generated phrase on screen and asks for the 25-word phrase of the key that signs the rekey. Both stay in the page's memory and are not sent or saved by Falqoner; only signed transactions are sent. Never type a MainNet phrase into a web page.
 - **Local handling is not zero-knowledge.** Phrases and keys are held as ordinary data in page memory, and JavaScript cannot guarantee they are erased. They are also wherever you write them down or save them.
 

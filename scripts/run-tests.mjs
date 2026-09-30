@@ -2,7 +2,7 @@
 /**
  * Portable sequential test runner: `node scripts/run-tests.mjs <unit|localnet|all>`.
  *
- * The root entry points and `@falconer/core`'s `test:all` route through this
+ * The root entry points and `@falqoner/core`'s `test:all` route through this
  * file so they describe the same behavior, and it stays runnable on Windows,
  * macOS and Linux: no POSIX-only `VAR=value cmd` prefixes, no shell, and vitest
  * is invoked through the current Node binary rather than a platform-specific

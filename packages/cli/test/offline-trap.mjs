@@ -1,5 +1,5 @@
 /**
- * Preloaded with `node --import` into every `falconer` subprocess the
+ * Preloaded with `node --import` into every `falqoner` subprocess the
  * executable tests start.
  *
  * It records, then refuses, anything that could leave the machine or reveal a
