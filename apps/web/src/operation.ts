@@ -1200,7 +1200,7 @@ export function useMigrationOperation(
             const hints = Object.fromEntries(stored.attempts.map((a) => [a.txId, a.confirmedRound]));
             readings = (await (ceremony as Ceremony).reconcile({ hints, timing: t })).readings;
           } catch (err) {
-            error = publicMessage(err);
+            error = `The ledger could not be read (${publicMessage(err)}). Check the ledger again.`;
           }
           if (!live(id)) return;
           for (const e of readings) {
@@ -1233,7 +1233,7 @@ export function useMigrationOperation(
             authority = await readAuthority(op.context.clients, op.context.sender, { requestTimeoutMs: t.requestMs });
           }
         } catch (err) {
-          error ??= `The account's authority could not be read: ${publicMessage(err)}`;
+          error ??= `The account's authority could not be read (${publicMessage(err)}). Check the ledger again.`;
         }
         if (!live(id)) return;
         if (authority) {

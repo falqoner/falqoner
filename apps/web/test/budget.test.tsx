@@ -123,6 +123,29 @@ async function continueWith(signingPhrase?: string) {
   await settle(() => click($.continueButton()!));
 }
 
+describe('a budget that cannot be read', () => {
+  it('says so and that reading again is safe, approves nothing, and clears once a reading succeeds', async () => {
+    await readyToMigrate();
+    local().fail('params', 'lose-request');
+    await settle(() => click($.button('Read the budget again')!));
+    await budgetFrom('funding');
+    expect($.q('[data-budget]')!.getAttribute('data-budget-status')).toBe('unavailable');
+    const problems = $.q('[data-budget-problems]')!.textContent!;
+    expect(problems).toContain("The budget is unavailable, so nothing can be approved: The budget's inputs could not be read");
+    expect(problems).toContain('Reading the budget sends nothing, so it is safe to read it again.');
+    // Still refused, and one control reads it again.
+    expect($.button('Migrate')!.disabled).toBe(true);
+    const again = Array.from(page.container.querySelectorAll('button')).filter((b) => b.textContent?.trim() === 'Read the budget again');
+    expect(again).toHaveLength(1);
+    await settle(() => click(again[0]!));
+    await budgetFrom('funding');
+    expect($.q('[data-budget]')!.getAttribute('data-budget-status')).toBe('available');
+    expect($.q('[data-budget-problems]')).toBeNull();
+    expect($.button('Migrate')!.disabled).toBe(false);
+    expect(local().count('send')).toBe(0);
+  });
+});
+
 describe('the budget binds the run', () => {
   it('runs within the budget on screen, with the ledger’s own accounting', async () => {
     const target = await readyToMigrate();

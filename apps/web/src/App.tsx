@@ -3,6 +3,7 @@ import algosdk from 'algosdk';
 import {
   analyzeAccount,
   clientsFor,
+  publicMessage,
   riskVerdict,
   type AccountExposure,
 } from '@falqoner/core';
@@ -108,13 +109,28 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
   const [scanned, setScannedState] = useState<Scanned | null>(null);
   const [busy, setBusyState] = useState(false);
   const [progress, setProgress] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  /** What went wrong and what to do, and for a failed read, the provider's words, bounded. */
+  const [error, setError] = useState<{ text: string; detail?: string } | null>(null);
   const [completed, setCompleted] = useState<Completed[]>([]);
+  const errorBox = useRef<HTMLDivElement>(null);
 
   // Handlers read these, not a render's copy, so two events in one turn see
   // each other.
   const scannedRef = useRef<Scanned | null>(null);
   const busyRef = useRef(false);
+  /**
+   * A dismissal removes the panel, and the button that had focus with it.
+   * Set by a dismissal, so the render that follows gives focus to the panel
+   * shown in its place, or to the scan form when there is none.
+   */
+  const dismissed = useRef(false);
+  const migrationHeading = useRef<HTMLHeadingElement>(null);
+  const addressInput = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (!dismissed.current) return;
+    dismissed.current = false;
+    (migrationHeading.current ?? addressInput.current)?.focus();
+  });
   const setScanned = (s: Scanned | null) => {
     scannedRef.current = s;
     setScannedState(s);
@@ -138,6 +154,12 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
     timing,
   });
   const lock = lockReason(operation);
+  // The form's alert sits below its fields, out of sight once a scan the
+  // operator started fails. It is scrolled to, and focus stays put. A refresh
+  // failing behind a migration panel moves nothing.
+  useEffect(() => {
+    if (error && commands.current().status === 'idle') errorBox.current?.scrollIntoView?.({ block: 'nearest' });
+  }, [error, commands]);
   // A saved record this page cannot use blocks a new migration, not the audit.
   const journalProblem = commands.journalProblem();
 
@@ -153,7 +175,11 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
     setAppsText(op.context.scan.apps);
   }, [recoveredId, commands]);
 
-  function startScan(parsed: Extract<ParsedScan, { request: ScanRequest }>, keep: boolean, failure = '') {
+  function startScan(
+    parsed: Extract<ParsedScan, { request: ScanRequest }>,
+    keep: boolean,
+    failure = 'The scan could not finish, so nothing was judged. Check the address and network, then scan again.',
+  ) {
     const seq = ++scanSeq.current;
     const current = () => seq === scanSeq.current;
     setBusy(true);
@@ -175,7 +201,7 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
           if (current()) setScanned({ exposure, request: parsed.request });
         },
         (err: any) => {
-          if (current()) setError(failure + String(err?.message ?? err));
+          if (current()) setError({ text: failure, detail: publicMessage(err) });
         },
       )
       .finally(() => {
@@ -193,7 +219,7 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
     if (commands.lockReason()) return;
     const parsed = parseScan(request);
     if ('error' in parsed) {
-      setError(parsed.error);
+      setError({ text: parsed.error });
       return;
     }
     // A key prepared against the previous scan never sent anything.
@@ -207,7 +233,12 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
     if (cur.status === 'idle' || cur.id !== op.id) return;
     const parsed = parseScan(op.context.scan);
     if ('error' in parsed) return;
-    startScan(parsed, true, 'The migration stands, but refreshing the report failed: ');
+    startScan(
+      parsed,
+      true,
+      'The migration stands, but the account could not be read again, so no report on this page shows ' +
+        'its new authority yet. Once the migration is dismissed, scan the account again.',
+    );
   }
 
   function changeNetwork(next: NetworkName) {
@@ -241,6 +272,7 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
   function dismiss(acknowledged: boolean) {
     const done = commands.dismiss(acknowledged);
     if (!done) return;
+    dismissed.current = true;
     const { sender, network: net, targetAddress } = done.context;
     // Only a verified migration is remembered as done; one that never
     // rekeyed leaves the account as it was.
@@ -303,6 +335,7 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
           <label className="field">
             <span>Algorand address</span>
             <input
+              ref={addressInput}
               type="text"
               value={address}
               spellCheck={false}
@@ -418,8 +451,13 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
           {busy ? progress : exposure ? `Scan finished: ${riskVerdict(exposure.risk).headline}.` : ''}
         </p>
         {error && (
-          <div className="err" role="alert" style={{ marginTop: 14 }}>
-            {error}
+          <div ref={errorBox} className="err" role="alert" style={{ marginTop: 14 }}>
+            {error.text}
+            {error.detail && (
+              <div className="mono" style={{ marginTop: 6 }} data-error-detail>
+                Details: {error.detail}
+              </div>
+            )}
           </div>
         )}
       </section>
@@ -472,6 +510,7 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
           operation={operation}
           commands={commands}
           completedTarget={completedTarget}
+          headingRef={migrationHeading}
           onGenerate={generate}
           onDismiss={dismiss}
         />

@@ -12,7 +12,7 @@
  *
  * Phrases come from fixed public seeds. None is printed.
  */
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest';
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import algosdk from 'algosdk';
@@ -112,6 +112,18 @@ afterEach(() => {
   expect(fetchTrap).not.toHaveBeenCalled();
   expect(XMLHttpRequest.prototype.open).not.toHaveBeenCalled();
 });
+
+/** Elements scrolled into view from now until the test ends; jsdom has no scrolling of its own. */
+function scrollSpy(): Element[] {
+  const scrolled: Element[] = [];
+  HTMLElement.prototype.scrollIntoView = function (this: Element) {
+    scrolled.push(this);
+  };
+  onTestFinished(() => {
+    delete (HTMLElement.prototype as { scrollIntoView?: unknown }).scrollIntoView;
+  });
+  return scrolled;
+}
 
 function remount(options: Parameters<typeof mount>[0] = {}) {
   unmount(page);
@@ -422,6 +434,49 @@ describe('keyboard focus through the ceremony', () => {
     await until(verified, 'verification');
     expect(document.activeElement).toBe($.q('[data-status-text]'));
   });
+
+  it('after a dismissal, goes to the panel shown in its place, and a later scan result leaves it there', async () => {
+    await ready();
+    await settle(() => click($.button('Migrate')!));
+    await until(verified, 'verification');
+    await settle(() => click($.q('[data-dismissal] input[type="checkbox"]')!));
+    const dismiss = $.button('Dismiss and remove the words from this page')!;
+    dismiss.focus();
+    await settle(() => click(dismiss));
+    expect($.panel()).toBeNull();
+    const heading = document.activeElement as HTMLElement;
+    expect(heading.tagName).toBe('H2');
+    expect(heading.parentElement!.textContent).toContain(`This account was migrated to ${T1.address} earlier in this session`);
+    await settle(() => world.scans.at(-1)!.d.resolve(REFRESHED_A));
+    expect(document.activeElement).toBe(heading);
+  });
+
+  it('stays on "Read the budget again" while it reads, whether the reading succeeds or fails', async () => {
+    await ready();
+    await budgetFor('funding');
+    const again = () => $.button('Read the budget again')!;
+    const held = deferred<void>();
+    local().fail('params', { until: held.promise });
+    again().focus();
+    await settle(() => click(again()));
+    expect($.q('[data-budget-reading]')).not.toBeNull();
+    expect(document.activeElement).toBe(again());
+    expect(again().getAttribute('aria-disabled')).toBe('true');
+    // Busy, pressing it reads nothing more.
+    const reads = local().count('params');
+    await settle(() => click(again()));
+    expect(local().count('params')).toBe(reads);
+    await settle(() => held.resolve());
+    await budgetFor('funding');
+    expect(document.activeElement).toBe(again());
+    expect(again().getAttribute('aria-disabled')).toBe('false');
+
+    local().fail('params', 'server-error');
+    await settle(() => click(again()));
+    await until(() => !$.q('[data-budget-reading]'), 'the failed reading');
+    expect($.q('[data-budget-problems]')).not.toBeNull();
+    expect(document.activeElement).toBe(again());
+  });
 });
 
 describe('an account record the node cannot vouch for (CORE-04)', () => {
@@ -439,12 +494,41 @@ describe('an account record the node cannot vouch for (CORE-04)', () => {
     expect(headings()).not.toContain('Verdict');
     await settle(() => world.scans.at(-1)!.d.reject(refusal));
 
-    expect($.q('.err')!.textContent).toBe(
-      'The node answered with an unusable account record (malformed account balance). Nothing was judged.',
+    expect($.q('[role="alert"].err')!.textContent).toContain('The scan could not finish, so nothing was judged. Check the address and network, then scan again.');
+    expect($.q('[data-error-detail]')!.textContent).toBe(
+      'Details: The node answered with an unusable account record (malformed account balance). Nothing was judged.',
     );
     expect(headings()).not.toContain('Verdict');
     expect($.button('Generate a post-quantum key')).toBeUndefined();
     expect($.panel()).toBeNull();
+  });
+
+  it('shows a failed read as what failed and what to do, with its own words bounded, redacted and as text', async () => {
+    await scanned(EXPOSURE_A);
+    await settle(() => setValue($.addressInput(), B));
+    const scan = $.button('Scan')!;
+    scan.focus();
+    await settle(() => click(scan));
+    const hostile = `<img src=x onerror="alert(1)"> ${SIGNER.phrase} ${'x'.repeat(400)}`;
+    const scrolled = scrollSpy();
+    await settle(() => world.scans.at(-1)!.d.reject(new Error(hostile)));
+
+    const alert = $.q('[role="alert"].err')!;
+    // Scrolled into sight, since it renders below the form's fields.
+    expect(scrolled).toEqual([alert]);
+    expect(alert.textContent).toContain('The scan could not finish, so nothing was judged. Check the address and network, then scan again.');
+    const detail = $.q('[data-error-detail]')!.textContent!;
+    expect(detail.startsWith('Details: <img src=x onerror="alert(1)"> [redacted] xxx')).toBe(true);
+    expect(detail).toHaveLength('Details: '.length + 241);
+    expect(alert.querySelector('img')).toBeNull();
+    expectNoSecrets($.text());
+    // The earlier report stays gone; focus stays on Scan, and one press starts one scan.
+    expect(headings()).not.toContain('Verdict');
+    expect(document.activeElement).toBe($.button('Scan'));
+    const scans = world.scans.length;
+    await settle(() => click($.button('Scan')!));
+    expect(world.scans.length).toBe(scans + 1);
+    expect($.q('.err')).toBeNull();
   });
 });
 
@@ -765,8 +849,17 @@ describe('after a confirmed rekey', () => {
     await ready();
     await settle(() => click($.button('Migrate')!));
     await until(verified, 'verification');
+    const scrolled = scrollSpy();
     await settle(() => world.scans.at(-1)!.d.reject(new Error('indexer unavailable')));
-    expect($.text()).toContain('The migration stands, but refreshing the report failed: indexer unavailable');
+    // Behind the migration panel, the page does not move.
+    expect(scrolled).toEqual([]);
+    // Not the failed scan's message: the migration and its words stay.
+    expect($.text()).toContain(
+      'The migration stands, but the account could not be read again, so no report on this page shows its new ' +
+        'authority yet. Once the migration is dismissed, scan the account again.',
+    );
+    expect($.q('[data-error-detail]')!.textContent).toBe('Details: indexer unavailable');
+    expect($.text()).not.toContain('nothing was judged');
     expect($.panel()!.dataset).toMatchObject({ status: 'confirmed', stage: 'verification' });
     expect($.text()).toContain('Migrated.');
     expectFrozen();

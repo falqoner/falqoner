@@ -43,6 +43,7 @@ export function Migrate({
   operation,
   commands,
   completedTarget,
+  headingRef,
   onGenerate,
   onDismiss,
 }: {
@@ -52,6 +53,8 @@ export function Migrate({
   commands: OperationCommands;
   /** This account was migrated to that address earlier in this session. */
   completedTarget: string | null;
+  /** The heading of the panel shown before a key exists, where focus goes after a dismissal. */
+  headingRef: RefObject<HTMLHeadingElement>;
   onGenerate: () => void;
   onDismiss: (acknowledged: boolean) => void;
 }) {
@@ -61,6 +64,7 @@ export function Migrate({
       <Intro
         exposure={exposure}
         completedTarget={completedTarget}
+        headingRef={headingRef}
         blocked={commands.journalProblem()}
         onGenerate={onGenerate}
       />
@@ -74,11 +78,13 @@ export function Migrate({
 function Intro({
   exposure,
   completedTarget,
+  headingRef,
   blocked,
   onGenerate,
 }: {
   exposure: AccountExposure;
   completedTarget: string | null;
+  headingRef: RefObject<HTMLHeadingElement>;
   blocked: string | null;
   onGenerate: () => void;
 }) {
@@ -88,7 +94,7 @@ function Intro({
     // migration of an account that has just been migrated.
     return (
       <div className="panel">
-        <h2>Migration</h2>
+        <h2 ref={headingRef} tabIndex={-1}>Migration</h2>
         <p className="dim">
           This account was migrated to {completedTarget} earlier in this
           session, and its recovery words were acknowledged and removed from
@@ -101,7 +107,7 @@ function Intro({
   if (exposure.isPostQuantum) {
     return (
       <div className="panel">
-        <h2>Migration</h2>
+        <h2 ref={headingRef} tabIndex={-1}>Migration</h2>
         <p className="dim">
           This account is already under post-quantum authority, on a
           provider-confirmed record. There is nothing to migrate for this
@@ -125,7 +131,7 @@ function Intro({
 
   return (
     <div className="panel">
-      <h2>Migration</h2>
+      <h2 ref={headingRef} tabIndex={-1}>Migration</h2>
       <p className="dim" style={{ marginTop: 8 }}>
         A migration is one rekey transaction. The address does not change,
         so every asset opt-in, application state and role this address
@@ -731,6 +737,7 @@ function BudgetPanel({ op, commands }: { op: Operation; commands: OperationComma
             <div className="callout danger" data-budget-problems>
               {q.status === 'unavailable' ? 'The budget is unavailable, so nothing can be approved: ' : 'This budget cannot go ahead: '}
               {q.problems.join(' ')}
+              {q.status === 'unavailable' && !op.inFlight && from && ' Reading the budget sends nothing, so it is safe to read it again.'}
             </div>
           )}
           {q.stages.length > 0 && (
@@ -801,8 +808,14 @@ function BudgetPanel({ op, commands }: { op: Operation; commands: OperationComma
           )}
         </>
       )}
-      {!op.inFlight && !op.quoting && from && (
-        <button className="ghost" style={{ marginTop: 10 }} onClick={() => void commands.refreshQuote()}>
+      {/* Busy, not removed, so keyboard focus stays on it while it reads. */}
+      {!op.inFlight && from && (
+        <button
+          className="ghost"
+          style={{ marginTop: 10 }}
+          aria-disabled={op.quoting}
+          onClick={() => void commands.refreshQuote()}
+        >
           Read the budget again
         </button>
       )}

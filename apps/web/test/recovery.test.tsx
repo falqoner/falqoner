@@ -290,6 +290,12 @@ describe('when nothing establishes whether it landed', () => {
     const alert = $.q('[data-alert="outcome-unknown"]')!.textContent!;
     expect(alert).toContain(`The rekey may have taken effect. If it did, ${A} is now controlled only by ${target.address}`);
     expect(alert).not.toContain('has not been rekeyed');
+    // What could not be read, and what to do: never that nothing was sent.
+    const error = $.q('[data-error]')!.textContent!;
+    expect(error).toMatch(/^The account's authority could not be read \(.+\)\. Check the ledger again\.$/);
+    expect(error).not.toMatch(/nothing was sent|not been rekeyed|not rekeyed/i);
+    const checks = Array.from(page.container.querySelectorAll('button')).filter((b) => b.textContent?.trim() === 'Check the ledger');
+    expect(checks).toHaveLength(1);
 
     // Each control used here is withdrawn while it acts; focus stays on the
     // status line, ahead of whatever comes next.
@@ -297,6 +303,7 @@ describe('when nothing establishes whether it landed', () => {
     local().clearFaults();
     await checkLedger();
     expect(document.activeElement).toBe(statusLine());
+    expect($.q('[data-error]')).toBeNull();
     await restore(target.mnemonic!);
     expect(document.activeElement).toBe(statusLine());
     await continueWith();
@@ -702,9 +709,13 @@ describe('two tabs', () => {
     await until(() => !!$C.button('Check the ledger') && $C.status() === 'confirmed', 'C to see it');
     const after = record().revision;
     await settle(() => click($C.q('[data-dismissal] input[type="checkbox"]')!));
-    await settle(() => click($C.button('Dismiss and remove the words from this page')!));
+    const refused = $C.button('Dismiss and remove the words from this page')!;
+    refused.focus();
+    await settle(() => click(refused));
     expect($C.q('[data-error]')!.textContent).toContain('Another tab holds this migration');
     expect(record().revision).toBe(after);
+    // Refused, the panel stays, and so does focus.
+    expect(document.activeElement).toBe(refused);
 
     // A is closed; C can now take it over and dismiss it.
     unmount(page);
@@ -732,10 +743,14 @@ describe('settling without a rekey', () => {
     expect($.q('[data-dismissal]')!.textContent).toContain('Settled without a rekey');
     expect($.q('[data-dismissal]')!.textContent).toContain('Nothing it sent reached the ledger');
     await settle(() => click($.q('[data-dismissal] input[type="checkbox"]')!));
-    await settle(() => click($.button('Dismiss and remove the words from this page')!));
+    const dismiss = $.button('Dismiss and remove the words from this page')!;
+    dismiss.focus();
+    await settle(() => click(dismiss));
     expect(stored()).toBeNull();
     expect($.panel()).toBeNull();
     expect(local().landed).toHaveLength(0);
+    // No report is on screen to take the panel's place, so focus goes to the scan form.
+    expect(document.activeElement).toBe($.addressInput());
     // Unlocked, and a new migration can start.
     await settle(() => setValue($.addressInput(), A));
     await settle(() => click($.button('Scan')!));
