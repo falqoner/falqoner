@@ -12,10 +12,12 @@ is lost; see [Limitations](README.md#limitations) and [SECURITY.md](SECURITY.md)
 ## Get the source
 
 The public repository is
-[`falqoner/falqoner`](https://github.com/falqoner/falqoner). Nothing has been
-released, and there is no beta tag or package. If you were invited to test a
-revision that is not public yet, use the repository and exact commit or branch
-your invitation names instead.
+[`falqoner/falqoner`](https://github.com/falqoner/falqoner). Released versions
+are tagged, with their downloads on its
+[Releases page](https://github.com/falqoner/falqoner/releases); none is
+published on a package registry. If you were invited to test a revision that
+is not public yet, use the repository and exact commit or branch your
+invitation names instead.
 
 ```bash
 git clone https://github.com/falqoner/falqoner.git

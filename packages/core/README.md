@@ -5,10 +5,10 @@ an Ed25519 key controls and scores that exposure, reports what ledger records
 establish about an account's authority, and plans and runs the rekey to a
 Falcon-1024 key that the Falqoner web app performs on TestNet and LocalNet.
 
-> **Experimental and not audited.** Version 0.1.0-beta.1 is an unreleased beta
-> candidate. It has not been tagged or published to any package registry, and
-> its API may change. A rekey to a key you cannot reproduce cannot be undone:
-> try any migration on TestNet first.
+> **Experimental and not audited.** Version 0.1.0-beta.1 is a beta for testers.
+> It is not published to any package registry, and its API may change. A rekey
+> to a key you cannot reproduce cannot be undone: try any migration on TestNet
+> first.
 
 ## Install
 

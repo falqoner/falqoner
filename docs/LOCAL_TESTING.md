@@ -375,5 +375,5 @@ docker compose -f .github/localnet/docker-compose.yml down --volumes   # falcone
 npm run localnet:start
 ```
 
-**CodeQL** has not run yet. The job runs only on a public repository; in a
-private one it is skipped, and a skipped CodeQL job is not a passing one.
+**CodeQL** runs only on a public repository; in a private one it is skipped,
+and a skipped CodeQL job is not a passing one.

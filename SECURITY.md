@@ -7,9 +7,9 @@ Falqoner is experimental prerelease software. It has not been externally audited
 | Version | Receives security fixes |
 | :--- | :--- |
 | Current source on the default branch | Yes. Fixes are made here. |
-| Published releases | None exist. The manifests say `0.1.0-beta.1`, a beta candidate that has not been released. |
+| Tagged prereleases, such as `0.1.0-beta.1` | Not separately. Fixes are made on the default branch. |
 
-A limited tester beta is planned but has not been published. When a release exists, this table will say which versions receive fixes.
+A version is released only once its tag and downloads are on the [Releases page](https://github.com/falqoner/falqoner/releases). A version named in the manifests alone is not a release.
 
 ## Reporting a vulnerability
 

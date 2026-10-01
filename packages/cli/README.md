@@ -4,8 +4,8 @@
 or a CI pipeline: what a key controls, whether an account's authority is
 established as post-quantum, and what migrating it would take.
 
-> **Experimental and not audited.** Version 0.1.0-beta.1 is an unreleased beta
-> candidate. It has not been tagged or published to any package registry.
+> **Experimental and not audited.** Version 0.1.0-beta.1 is a beta for testers.
+> It is not published to any package registry.
 
 ## Install
 

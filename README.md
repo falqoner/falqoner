@@ -46,7 +46,7 @@ Answering them only reads public ledger data: the audit in the web app, and the 
 
 Testing an invitation, or contributing? Start with [CONTRIBUTING.md](CONTRIBUTING.md): which revision to check out, the checks to run, and how to report a problem.
 
-**Names.** Falqoner is the project's public name. The command is `falqoner`, and the workspace packages are `@falqoner/core`, `@falqoner/cli` and `@falqoner/web`. None of them is published to a package registry. The development name, Falconer, remains in a few places until a later refresh: the web app's title and text, messages such as "not verified by Falconer", the demo script and its recordings (which show `$ falconer`), and core's `FalconerClients` type. The browser's migration record and tab lock also keep their names, so a record saved before the rename still resumes. Packages named `falconer` or `@falconer/...` on the public npm registry belong to other projects, so do not install anything by those names from it.
+**Names.** Falqoner is the project's public name. The command is `falqoner`, and the workspace packages are `@falqoner/core`, `@falqoner/cli` and `@falqoner/web`. None of them is published to a package registry. The development name, Falconer, remains in a few places until a later refresh: the web app's title and text, messages such as "not verified by Falconer", the demo script and its recordings (which show `$ falconer`), and core's `FalconerClients` type. The copyright notice in [LICENSE](LICENSE), repeated under [License](#license), keeps its attribution to "Falconer Contributors" as written; the rename does not change it. The browser's migration record and tab lock also keep their names, so a record saved before the rename still resumes. Packages named `falconer` or `@falconer/...` on the public npm registry belong to other projects, so do not install anything by those names from it.
 
 Both options need Node 22.13+ or Node 24, with the npm it ships ([toolchain](docs/LOCAL_TESTING.md#toolchain)).
 
@@ -279,7 +279,7 @@ are added. On 2026-09-29, hosted CI in the development repository passed 719
 offline tests on each of Ubuntu 24.04, Windows Server 2025 and macOS 26 with
 Node 22.13.0 and 24.0.0, and 36 LocalNet tests; a later local run on Windows 11
 with Node 22.15.0 passed 750 offline and 36 LocalNet tests. None was skipped.
-CodeQL has not run yet: its job runs only on a public repository.
+CodeQL was not part of those runs: its job runs only on a public repository.
 
 ```bash
 # Offline suites: core unit, regression, coverage and cryptographic tests; the

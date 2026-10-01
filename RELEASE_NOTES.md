@@ -1,16 +1,16 @@
 # Release notes
 
 Falqoner is experimental prerelease software and has not been externally
-audited. Nothing has been released: there is no tagged version and no package
-on any registry.
+audited. A version is released only once its tag and downloads are on the
+[Releases page](https://github.com/falqoner/falqoner/releases); a version named
+here alone is not a release. No package is published on any registry.
 
-## Unreleased: 0.1.0-beta.1 candidate (prepared 2026-10-01)
+## 0.1.0-beta.1 (beta, prepared 2026-10-01)
 
-A local beta candidate, not a release: the manifests say `0.1.0-beta.1`, but
-there is no tag, download or registry package. It covers the `@falqoner/core`
-and `@falqoner/cli` packages, with the `falqoner` command, and the web app. The
-licensing questions under [Limits](#limits) must be settled before any of them
-is distributed, and the candidate's files may change when they are.
+A beta for testers. It covers the `@falqoner/core` and `@falqoner/cli`
+packages, with the `falqoner` command, and the web app. The licensing
+questions under [Limits](#limits) must be settled before any of them is
+distributed, and this version's files may change when they are.
 
 ### Reading an account
 
@@ -49,4 +49,6 @@ is distributed, and the candidate's files may change when they are.
   analysed. See [Limitations](README.md#limitations) and
   [SECURITY.md](SECURITY.md), which also explains how to report a
   vulnerability privately.
-- The CI workflow and CodeQL analysis have not run on this repository yet.
+- These notes report no hosted CI or CodeQL result. See the repository's
+  [Actions page](https://github.com/falqoner/falqoner/actions) for the commit
+  you use.
