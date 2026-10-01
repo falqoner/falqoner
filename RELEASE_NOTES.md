@@ -41,10 +41,9 @@ distributed, and this version's files may change when they are.
 - The command is `falqoner` and the packages are `@falqoner/*`, but the web
   app, some messages and the demo still use the development name, Falconer;
   see [Try It](README.md#try-it).
-- `falcon-1024`, which supplies the Falcon-1024 WebAssembly, declares no
-  license, and the terms of the Algorand extension to the Falcon C code it
-  compiles are unresolved. See
-  [third-party notices](apps/web/public/THIRD_PARTY_NOTICES.md).
+- The terms of Algorand's extension to the Falcon C code, which Falqoner
+  compiles into its Falcon-1024 WebAssembly, are unresolved. See
+  [third-party notices](packages/core/THIRD_PARTY_NOTICES.md).
 - Searches are bounded, and application and logic-signature programs are not
   analysed. See [Limitations](README.md#limitations) and
   [SECURITY.md](SECURITY.md), which also explains how to report a

@@ -6,15 +6,18 @@
  * the two tarballs into a fresh consumer outside the workspace, so nothing can
  * resolve through a workspace link. A registry package by either name could
  * otherwise resolve in its place, so the consumer's lockfile must show
- * that each package came from its own tarball and that `falcon-1024` is the
- * locked release whose provenance was checked.
+ * that each package came from its own tarball, and that nothing installed
+ * `falcon-1024`, the package core's Falcon-1024 once came from.
  *
  * In the consumer it then checks that each package ships its README and the
- * project's LICENSE, and nothing outside `dist`; that core imports and signs
- * and verifies with Falcon-1024 in memory, which runs the embedded
- * WebAssembly and prints no key; that the `falqoner` command prints help; and
- * that `verify` passes against the CLI's fixed ledger with its offline traps
- * loaded, which refuse any other request.
+ * project's LICENSE, core also its third-party notices, and nothing outside
+ * `dist`; that installed core holds the pinned Falcon-1024 WebAssembly
+ * (`scripts/wasm-provenance.mjs`); that core imports, restores a fixed
+ * fixture's address from its 25 words, and signs and verifies with
+ * Falcon-1024 in memory, which runs that WebAssembly and prints no key, while
+ * `falcon-1024` does not resolve; that the `falqoner` command prints help;
+ * and that `verify` passes against the CLI's fixed ledger with its offline
+ * traps loaded, which refuse any other request.
  *
  * It prints each tarball's files and SHA-256 and exits 1 on the first
  * failure. Core's dependencies come from the npm cache or registry. The
@@ -37,6 +40,9 @@ const CLI_TEST = path.join(ROOT, 'packages', 'cli', 'test');
 const PACKAGES = { '@falqoner/core': 'packages/core', '@falqoner/cli': 'packages/cli' };
 /** Every packed path must be one of these or under `dist/`. */
 const ALWAYS = ['package.json', 'README.md', 'LICENSE'];
+/** And core ships the notices for the WebAssembly it embeds. */
+const NOTICES = 'THIRD_PARTY_NOTICES.md';
+const shipped = (/** @type {string} */ name) => (name === '@falqoner/core' ? [...ALWAYS, NOTICES] : ALWAYS);
 
 /** @param {string} message @returns {never} */
 function fail(message) {
@@ -86,11 +92,11 @@ for (const { name, filename, integrity, files } of packed) {
   const entries = [manifest.main, manifest.types, ...Object.values(manifest.bin ?? {})]
     .filter(Boolean)
     .map((p) => path.posix.normalize(p));
-  for (const required of [...ALWAYS, ...entries]) {
+  for (const required of [...shipped(name), ...entries]) {
     if (!paths.includes(required)) fail(`${name} tarball is missing ${required}`);
   }
   for (const p of paths) {
-    if (!ALWAYS.includes(p) && !p.startsWith('dist/')) fail(`${name} tarball includes ${p}`);
+    if (!shipped(name).includes(p) && !p.startsWith('dist/')) fail(`${name} tarball includes ${p}`);
     // tsc never deletes output, so a build left from a removed source would ship.
     if (p.endsWith('.js') && !existsSync(path.join(dir, 'src', p.slice(5, -3) + '.ts'))) {
       fail(`${name} tarball includes ${p}, which no source file builds`);
@@ -125,48 +131,54 @@ for (const { name, filename, integrity } of packed) {
   if (copies(name).length !== 1) fail(`${name} is installed more than once: ${copies(name).join(', ')}`);
   const installed = path.join(consumer, 'node_modules', ...name.split('/'));
   if (lstatSync(installed).isSymbolicLink()) fail(`${name} is a link, not an installed copy`);
-  for (const doc of ['README.md', 'LICENSE']) {
+  for (const doc of shipped(name).slice(1)) {
     if (!existsSync(path.join(installed, doc))) fail(`installed ${name} has no ${doc}`);
   }
   if (text(path.join(installed, 'LICENSE')) !== text(path.join(ROOT, 'LICENSE'))) {
     fail(`installed ${name} LICENSE differs from the project LICENSE`);
   }
 }
-
-/** @type {{ packages: Record<string, { integrity?: string }> }} */
-const workspaceLock = JSON.parse(readFileSync(path.join(ROOT, 'package-lock.json'), 'utf8'));
-const falcon = lock.packages['node_modules/falcon-1024'];
-const lockedFalcon = workspaceLock.packages['node_modules/falcon-1024'];
-if (copies('falcon-1024').length !== 1 || !falcon || falcon.integrity !== lockedFalcon?.integrity) {
-  fail(`falcon-1024 in the consumer is not the workspace's locked release: ${JSON.stringify(falcon)}`);
+const installedCore = path.join(consumer, 'node_modules', '@falqoner', 'core');
+if (text(path.join(installedCore, NOTICES)) !== text(path.join(ROOT, PACKAGES['@falqoner/core'], NOTICES))) {
+  fail(`installed @falqoner/core ${NOTICES} differs from the workspace's`);
 }
-const versions = packed.map(({ name }) => `${name}@${lock.packages[`node_modules/${name}`]?.version}`);
-console.log(`consumer: ${versions.join(' and ')} from their tarballs; falcon-1024 ${falcon.version} ${falcon.integrity}`);
 
-// 4. Core runs from the consumer: Falcon-1024 through the embedded WebAssembly.
+if (copies('falcon-1024').length) fail(`the consumer installed falcon-1024: ${copies('falcon-1024').join(', ')}`);
+const versions = packed.map(({ name }) => `${name}@${lock.packages[`node_modules/${name}`]?.version}`);
+console.log(`consumer: ${versions.join(' and ')} from their tarballs; no falcon-1024 installed`);
+
+// 4. Core runs from the consumer: Falcon-1024 through its own embedded WebAssembly.
+const provenance = node('installed WebAssembly provenance', [
+  path.join(ROOT, 'scripts', 'wasm-provenance.mjs'), path.join(installedCore, 'dist', 'falcon-wasm.js'),
+]);
+console.log(provenance.trim().split('\n').filter((line) => !line.startsWith('  ')).join('\n'));
+/** @type {{ seeds: Array<{ restored: { address: string } }> }} */
+const vectors = JSON.parse(readFileSync(path.join(ROOT, 'packages', 'core', 'test', 'falcon-vectors.json'), 'utf8'));
+const fixture = vectors.seeds[0]?.restored.address;
 const probe = `
-import { classifyAddressShape, generatePqIdentity, selfTestIdentity } from '@falqoner/core';
+import algosdk from 'algosdk';
+import { classifyAddressShape, generatePqIdentity, pqIdentityFromMnemonic, selfTestIdentity } from '@falqoner/core';
+let wrapper = null;
+try { wrapper = import.meta.resolve('falcon-1024'); } catch {}
 const a = generatePqIdentity();
 const b = generatePqIdentity();
 console.log(JSON.stringify({
   core: import.meta.resolve('@falqoner/core'),
-  falcon: import.meta.resolve('falcon-1024'),
+  wrapper,
+  fixture: pqIdentityFromMnemonic(algosdk.mnemonicFromSeed(new Uint8Array(32))).address,
   shape: classifyAddressShape(a.address),
   signs: selfTestIdentity(a),
   rejectsOtherKey: !selfTestIdentity({ ...a, publicKey: b.publicKey }),
 }));`;
 const core = JSON.parse(node('core import', ['--input-type=module', '-e', probe], { cwd: consumer }));
-const within = (/** @type {string} */ url, /** @type {string} */ name) =>
-  realpathSync(fileURLToPath(url)).startsWith(
-    realpathSync(path.join(consumer, 'node_modules', ...name.split('/'))) + path.sep,
-  );
-if (!within(core.core, '@falqoner/core') || !within(core.falcon, 'falcon-1024')) {
-  fail(`core or falcon-1024 did not load from the consumer: ${core.core} ${core.falcon}`);
+if (!realpathSync(fileURLToPath(core.core)).startsWith(realpathSync(installedCore) + path.sep)) {
+  fail(`core did not load from the consumer: ${core.core}`);
 }
-if (core.shape !== 'off-curve' || core.signs !== true || core.rejectsOtherKey !== true) {
-  fail(`Falcon round trip: ${JSON.stringify({ ...core, core: undefined, falcon: undefined })}`);
+if (core.wrapper !== null) fail(`falcon-1024 resolves in the consumer: ${core.wrapper}`);
+if (core.fixture !== fixture || core.shape !== 'off-curve' || core.signs !== true || core.rejectsOtherKey !== true) {
+  fail(`Falcon round trip: ${JSON.stringify({ ...core, core: undefined, expected: fixture })}`);
 }
-console.log('core: imported; a Falcon-1024 key signs and verifies, and another key is rejected');
+console.log(`core: imported; the zero seed's 25 words restore ${fixture}; a new Falcon-1024 key signs and verifies, another key is rejected, and falcon-1024 does not resolve`);
 
 // 5. The CLI's bin, and a fixed-ledger command with the offline traps loaded.
 const cliDir = path.join(consumer, 'node_modules', '@falqoner', 'cli');

@@ -110,6 +110,15 @@ cannot serve is shown as unproven, and that an invalid address is refused on
 screen: that the bundle works in a browser, not the behaviour the web suite
 covers.
 
+`node scripts/wasm-provenance.mjs` checks core's embedded Falcon-1024
+WebAssembly, reading it as data, never running it: that
+`packages/core/src/falcon-wasm.ts` holds exactly the pinned output of
+`packages/core/falcon/build.sh`. Given core's built `dist/falcon-wasm.js`, the
+web build's `apps/web/dist/assets` or a rebuilt `falcon.wasm`, it compares
+each with that module byte for byte. Rebuilding needs Linux, the pinned Falcon
+sources and Emscripten 5.0.7, as the build script's header describes;
+ordinary installs and builds use the committed module and need none of them.
+
 ## Running the LocalNet suite
 
 ### 1. Start the services, explicitly
@@ -344,7 +353,7 @@ in a comment. Configuration alone is not evidence of a successful hosted run.
 
 | Job | Runs | Where |
 | --- | --- | --- |
-| Offline | `npm ci`, `format:check`, `typecheck`, `build`, `npm test` | Ubuntu 24.04, Windows Server 2025 and macOS 26, each on Node 22.13.0 and 24.0.0, the floors of the supported lines |
+| Offline | `npm ci`, `format:check`, `typecheck`, `build`, the WebAssembly provenance check on core's and the web app's builds, `npm test` | Ubuntu 24.04, Windows Server 2025 and macOS 26, each on Node 22.13.0 and 24.0.0, the floors of the supported lines |
 | Built-page smoke | `npm run test:web-smoke` | The Ubuntu, Node 22.13.0 offline job, with the runner's Google Chrome |
 | LocalNet integration | `npm ci`, the pinned LocalNet, readiness, `npm run test:localnet` | Ubuntu 24.04, Node 24.21.0 |
 | Dependency audit | `npm audit`, where any advisory fails, then `npm audit signatures` | Ubuntu 24.04, Node 24.21.0 |

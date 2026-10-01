@@ -24,7 +24,7 @@ A useful report includes:
 
 **Never send a recovery phrase, private key, seed or funds**, in a report or anywhere else. A report never needs them, and no Falqoner maintainer will ask for them. If a phrase was exposed while you reproduced a problem, treat that key as compromised and move what it controls.
 
-Problems in the Algorand protocol, node software, public API providers, wallets or the `falcon-1024` package belong with their own maintainers. Please also tell us if one affects Falqoner.
+Problems in the Algorand protocol, node software, public API providers, wallets or the Falcon C code in `algorand/falcon` belong with their own maintainers. Please also tell us if one affects Falqoner.
 
 ## What Falqoner checks, and what it trusts
 
@@ -74,5 +74,6 @@ Core's lower-level functions are for tests and tooling, not a supported migratio
 ## Dependencies and the Falcon WebAssembly
 
 - `package-lock.json` pins every third-party package to an exact version from the npm registry with an integrity hash, and `npm ci` installs exactly those.
-- Falcon-1024 comes from the npm package `falcon-1024` 0.2.0, which ships precompiled WebAssembly inside its JavaScript. Its README says it is built from the C implementation that go-algorand uses. On 2026-09-30, the package's own build script, run from its source commit with the `algorand/falcon` C code that commit pins, produced byte-identical WebAssembly; `scripts/wasm-provenance.mjs` makes that comparison. Falqoner has not checked which Falcon revision go-algorand uses, and a matching build does not show that the cryptography is correct.
-- Falqoner's LocalNet tests submit Falcon signatures made with this package to a real algod node, which accepts them. A dependency audit on 2026-09-29 reported no known vulnerabilities and verified npm registry signatures. These checks show compatibility and where packages came from, not that the cryptography is correct. CodeQL static analysis has not yet run on Falqoner's code.
+- Falcon-1024 runs in Falqoner's own WebAssembly build of Algorand's deterministic Falcon C code, `algorand/falcon` at a pinned commit, compiled with Emscripten 5.0.7 and embedded in `@falqoner/core` with Falqoner's own loader. `packages/core/falcon/build.sh` builds it and refuses any other source revision or compiler; two builds from clean checkouts on 2026-10-01 gave identical bytes, and `scripts/wasm-provenance.mjs` checks that the embedded module is that build. On fixed test inputs its keys and signatures match those of the `falcon-1024` npm package Falqoner used before. Falqoner has not checked which Falcon revision go-algorand uses, and a reproducible build and matching test results do not show that the cryptography is correct.
+- The loader checks every input's type and size and copies inputs into the module's memory. After each call it clears those copies before attempting to free them; if WebAssembly traps, it discards the instance. That clearing is best effort: it does not reach the C code's own temporary memory or the keys returned to JavaScript.
+- Falqoner's LocalNet tests submit Falcon signatures made with this build to a real algod node, which accepts them. A dependency audit on 2026-09-29 reported no known vulnerabilities and verified npm registry signatures. These checks show compatibility and where packages came from, not that the cryptography is correct. CodeQL static analysis has not yet run on Falqoner's code.

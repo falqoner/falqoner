@@ -48,9 +48,9 @@
  * primitives.
  */
 import algosdk from 'algosdk';
-import { verifyCompressed } from 'falcon-1024';
 import type { PqIdentity } from './types.js';
 import { checkPqAddressBinding } from './authority.js';
+import { falcon } from './falcon-binding.js';
 import { derivePqAddress, isHashDerivedAddress, makeFalconSigner } from './falcon.js';
 import type { FalconerClients } from './networks.js';
 import { exceedsApproved, quoteMigration, stageOf, type MigrationBudget, type SignerSupport } from './budget.js';
@@ -312,7 +312,7 @@ async function falconSignatureDoubt(
       const binding = checkPqAddressBinding(pqsig, target);
       if (!binding.bound || !(publicKey instanceof Uint8Array) || !(signature instanceof Uint8Array)) {
         why = `its Falcon-1024 key does not derive ${target} (${binding.reason ?? 'unreadable'})`;
-      } else if (!verifyCompressed(publicKey, signature, attemptTransaction(a).bytesToSign())) {
+      } else if (!falcon.verifyCompressed(publicKey, signature, attemptTransaction(a).bytesToSign())) {
         why = 'its Falcon-1024 signature does not verify over it';
       }
     } catch {

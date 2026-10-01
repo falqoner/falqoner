@@ -13,13 +13,13 @@
  * never collide with a classical Ed25519 public key.
  */
 import algosdk from 'algosdk';
-import { generateKey, signCompressed, verifyCompressed } from 'falcon-1024';
 import jsSha512 from 'js-sha512';
+import { PRIVATE_KEY_BYTES, PUBLIC_KEY_BYTES, falcon } from './falcon-binding.js';
 import type { PqIdentity } from './types.js';
 
 export const FALCON_SCHEME = algosdk.FALCON_1024_SCHEME;
-export const FALCON_PUBKEY_BYTES = 1793;
-export const FALCON_PRIVKEY_BYTES = 2305;
+export const FALCON_PUBKEY_BYTES = PUBLIC_KEY_BYTES;
+export const FALCON_PRIVKEY_BYTES = PRIVATE_KEY_BYTES;
 
 // What a Falcon signature adds to a fee is a consensus rule, not a constant:
 // see budget.ts, which prices every step from the network's own parameters.
@@ -184,7 +184,7 @@ export function derivePqAddressAtSalt(
 export function pqIdentityFromMnemonic(mnemonic: string): PqIdentity {
   const normalised = mnemonic.trim().replace(/\s+/g, ' ');
   const seed = algosdk.pq25WordMnemonicToSeed(normalised, FALCON_SCHEME);
-  const { publicKey, privateKey } = generateKey(seed);
+  const { publicKey, privateKey } = falcon.generateKey(seed);
   const { address, salt } = derivePqAddress(publicKey);
   return {
     scheme: FALCON_SCHEME,
@@ -238,7 +238,7 @@ export function makeFalconSigner(
   const signingKey = {
     falcon1024PublicKey: identity.publicKey,
     falcon1024Signer: async (bytes: Uint8Array) =>
-      signCompressed(identity.privateKey, bytes),
+      falcon.signCompressed(identity.privateKey, bytes),
   };
   const addressable = algosdk.addressWithSignersFromRawFalcon1024Signer(
     signingKey,
@@ -249,12 +249,12 @@ export function makeFalconSigner(
 
 /**
  * Local self-test that a Falcon identity can sign and verify. False, not an
- * exception, when it cannot: the library throws on a signature it rejects.
+ * exception, when it cannot: the binding throws on a signature it rejects.
  */
 export function selfTestIdentity(identity: PqIdentity): boolean {
   const probe = new TextEncoder().encode('falconer-self-test');
   try {
-    return verifyCompressed(identity.publicKey, signCompressed(identity.privateKey, probe), probe);
+    return falcon.verifyCompressed(identity.publicKey, falcon.signCompressed(identity.privateKey, probe), probe);
   } catch {
     return false;
   }

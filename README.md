@@ -336,7 +336,7 @@ Stated plainly, because a security tool that overstates itself is worse than non
 ## Tech Stack
 
 - `algosdk` 3.7, for post-quantum mnemonics, addresses and signed transactions
-- `falcon-1024` 0.2, precompiled WebAssembly; its README says it is built from the C implementation go-algorand uses
+- Falcon-1024 from Falqoner's own reproducible WebAssembly build of Algorand's deterministic Falcon C code (`algorand/falcon`, Emscripten 5.0.7), embedded in `@falqoner/core`
 - AlgoKit LocalNet with algod 5.0.2, the version the integration suite is verified against
 - TypeScript 5.7, React 18, Vite, Vitest
 
@@ -346,4 +346,4 @@ Stated plainly, because a security tool that overstates itself is worse than non
 
 MIT © 2026 Falconer Contributors. See [LICENSE](LICENSE) for details.
 
-Dependencies keep their own licenses. The web app's build includes the notices for the code it bundles: [`THIRD_PARTY_NOTICES.md`](apps/web/public/THIRD_PARTY_NOTICES.md) for the Falcon-1024 WebAssembly, and a generated `THIRD_PARTY_LICENSES.md`.
+Dependencies keep their own licenses. Core, and the web app's build, carry the notices for the third-party code in the Falcon-1024 WebAssembly: [`THIRD_PARTY_NOTICES.md`](packages/core/THIRD_PARTY_NOTICES.md). The web build also writes a generated `THIRD_PARTY_LICENSES.md` for the packages it bundles.

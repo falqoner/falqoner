@@ -47,8 +47,8 @@
  * loads a key or signs.
  */
 import algosdk from 'algosdk';
-import { FALCON_DET1024_SIG_COMPRESSED_MAXSIZE } from 'falcon-1024';
 import type { AuthorityAssessment } from './authority.js';
+import { MAX_SIGNATURE_BYTES } from './falcon-binding.js';
 import { FALCON_PUBKEY_BYTES, FALCON_SCHEME, isHashDerivedAddress } from './falcon.js';
 import { formatAlgos } from './exposure.js';
 import type { FalconerClients } from './networks.js';
@@ -98,7 +98,7 @@ export const PROTOCOL_RULES: Readonly<Record<string, ProtocolRules>> = Object.fr
 /** A fee factor of one: one minimum fee. */
 const FACTOR_ONE = 1_000_000n;
 /** The largest compressed deterministic Falcon-1024 signature. */
-export const FALCON_MAX_SIGNATURE_BYTES = FALCON_DET1024_SIG_COMPRESSED_MAXSIZE;
+export const FALCON_MAX_SIGNATURE_BYTES = MAX_SIGNATURE_BYTES;
 /** No step is quoted, prepared or recorded with a fee above this. */
 export const MAX_STAGE_FEE_MICROALGOS = 1_000_000n;
 /** How many rounds after it was read a quote may still be used to prepare a step. */

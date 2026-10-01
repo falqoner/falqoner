@@ -1,29 +1,23 @@
 # Third-party notices
 
-This web app bundles third-party packages. `THIRD_PARTY_LICENSES.md`, next
-to this file, is generated when the app is built, from each bundled package's
-own license metadata and files. Falqoner's own code is MIT licensed.
+Falqoner's own code is MIT licensed. `@falqoner/core` embeds a WebAssembly
+module that also contains third-party code, whose notices follow. Everything
+built from core carries this file: the core package itself, the CLI through
+its dependency on core, and the web app, which publishes it next to the page
+with `THIRD_PARTY_LICENSES.md`, generated from the license files of the
+packages it bundles.
 
-One bundled package, `falcon-1024`, contains code whose notices the package
-itself does not carry. They follow.
+## Falcon-1024 WebAssembly
 
-## falcon-1024 0.2.0
-
-- Package: https://registry.npmjs.org/falcon-1024/-/falcon-1024-0.2.0.tgz
-  (sha512-zKBiKGbAVmROFJNjy1iZ009V9wclL9lZkRAP7l7cfsHkZg14jyWgJk1XtAnmn2sxaKv2hsRTEVuTot/CSoQnSw==)
-- Source: https://github.com/joe-p/falcon-1024-ts, commit
-  4754f0a0ce0a3e11d4e3d7432fcbc434ebeac6ef (version 0.2.0)
-- License: none declared. The package has no license field or license file,
-  and its source repository has no license file (checked 2026-09-30).
-
-It embeds a WebAssembly build of the Falcon-1024 C implementation below,
-compiled with Emscripten 5.0.7, and Emscripten's JavaScript runtime. On
-2026-09-30 Falqoner rebuilt it from the commits named here with the package's
-own build script and got byte-identical WebAssembly (95,438 bytes, SHA-256
-5c416483f859809e9fb90b483c43785cf28170ba52d4de7cfbf956bc69665a9a). The
-rebuild shows where the code came from; it does not supply the package's
-missing license. The linker also takes eight objects from Emscripten's system
-libraries; they are listed after the Emscripten license.
+Falqoner builds the module itself with `packages/core/falcon/build.sh`: the
+Falcon-1024 C implementation below and Falqoner's own `binding.c` beside that
+script, compiled with Emscripten 5.0.7 into standalone WebAssembly (95,937
+bytes, SHA-256
+22581da83225d4d1b7ed0647699cd33effeeb5dade4ac1cf51cbb0f101d12851). Two
+builds from clean checkouts on 2026-10-01 gave identical bytes. No Emscripten
+JavaScript is included; core loads the module with its own code. The linker
+also takes seventeen objects from Emscripten's system libraries; they are
+listed after the Emscripten license.
 
 ### Falcon-1024 C implementation
 
@@ -57,13 +51,13 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ===========================(LICENSE END)=============================
 ```
 
-The package's build compiles all eleven C files at that commit. Ten of them,
+The build compiles all eleven C files at that commit, unmodified. Ten of them,
 and the header files they share, carry the same MIT permission notice, naming
 the Falcon Project (2017-2019). The exceptions are `deterministic.c` and
 `deterministic.h`, which have no license header. They are Algorand's
 deterministic-signing extension, added in commit
 06b25d7bcac00793ada7224349ca20dfc0114fab, and `deterministic.c` defines the
-key-generation, signing and verification functions the package exports.
+key-generation, signing and verification functions the module uses.
 `README.txt` credits the
 extension to David Lazar, "with input from Chris Peikert ... and others from
 Algorand, Inc." An upstream issue asks whether the Falcon Project's MIT license
@@ -185,14 +179,28 @@ flag will run closure compiler from third_party/).
 
 ### Emscripten system code in the WebAssembly
 
-The rebuild's link record names these objects from Emscripten's prebuilt
-system libraries. Each is mapped by name to its source at the Emscripten commit
-above, with the license statement found there:
+The build's link record (`why-extract.txt`) names these objects from
+Emscripten's prebuilt system libraries. Each is mapped by name to its source at
+the Emscripten commit above, with the license statement found there. Some of
+the musl files carry Emscripten's changes, marked `__EMSCRIPTEN__` or
+`XXX EMSCRIPTEN`; those changes are Emscripten's, under its `LICENSE` above.
 
 - `libc.a(emscripten_memset.o)`: `system/lib/libc/emscripten_memset.c`, which
   compiles musl's `src/string/memset.c` in this build. musl: MIT, below.
 - `libc.a(__errno_location.o)`:
   `system/lib/libc/musl/src/errno/__errno_location.c`. musl: MIT, below.
+- `libc.a(strcmp.o)`, `libc.a(strlen.o)`, `libc.a(strdup.o)`,
+  `libc.a(stpncpy.o)`, `libc.a(strncpy.o)`: `strcmp.c`, `strlen.c`,
+  `strdup.c`, `stpncpy.c` and `strncpy.c` in
+  `system/lib/libc/musl/src/string/`. musl: MIT, below.
+- `libc.a(abort.o)`, `libc.a(clock_gettime.o)`:
+  `system/lib/libc/musl/src/exit/abort.c` and
+  `system/lib/libc/musl/src/time/clock_gettime.c`. musl: MIT, below.
+- `libc.a(wasi-helpers.o)`: `system/lib/libc/wasi-helpers.c`. Header: The
+  Emscripten Authors, MIT or NCSA, as above.
+- `libstandalonewasm-nocatch-memgrow.a(standalone.o)`:
+  `system/lib/standalone/standalone.c`. Header: The Emscripten Authors, MIT or
+  NCSA, as above.
 - `libc.a(emscripten_memcpy.o)`, `libc.a(emscripten_memcpy_bulkmem.o)`:
   `system/lib/libc/emscripten_memcpy.c` and `emscripten_memcpy_bulkmem.S`.
   No file header. Every author in their history is listed in Emscripten's

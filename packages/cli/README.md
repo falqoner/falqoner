@@ -67,4 +67,4 @@ no signing key.
 
 Falqoner's own code is MIT licensed: see `LICENSE`. This package does not
 include its dependencies, which npm installs under their own terms; see the
-`@falqoner/core` README for the Falcon-1024 dependency.
+`@falqoner/core` README for the Falcon-1024 WebAssembly core embeds.

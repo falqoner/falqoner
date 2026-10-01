@@ -1,47 +1,47 @@
 #!/usr/bin/env node
 /**
  * Falcon-1024 WebAssembly provenance check:
- * `node scripts/wasm-provenance.mjs [glue.js ...]`.
  *
- * `falcon-1024` embeds its WebAssembly in Emscripten glue as one string passed
- * to `binaryDecode`. This decodes that string as data, never as code, and
- * refuses anything but plain escapes and characters; it checks the installed
- * package's copy against the pinned baseline, then
- * compares each glue file given (by default the installed ESM and CJS
- * bundles; also rebuilt glue or the web build's `apps/web/dist/assets/*.js`)
- * with it byte for byte. It prints each module's WebAssembly sections
- * with their sizes and SHA-256, and on a mismatch the first differing offset
- * and the sections that differ. A copy of the baseline with one code byte
- * flipped must fail the same comparison. Exits 1 on any mismatch.
+ *   node scripts/wasm-provenance.mjs [file or directory ...]
+ *   node scripts/wasm-provenance.mjs --write <falcon.wasm>
  *
- * Rebuild from the pinned sources on Linux x86_64 in a scratch directory, with
- * upstream's own build script (it compiles every `falcon/*.c` twice, into
- * `src/falcon_wasm.js` and `src/falcon_wasm_sync.js`):
+ * `@falqoner/core` embeds Falqoner's own build of Algorand's deterministic
+ * Falcon-1024 C code (`packages/core/falcon/build.sh`) as one base64 string in
+ * `packages/core/src/falcon-wasm.ts`. This reads that string as data, never
+ * as code, refusing anything but canonical base64. The module must be the
+ * pinned build below, and the file exactly the text `--write` makes from it,
+ * so the committed bytes are reproducible from a rebuild.
  *
- *   git clone https://github.com/joe-p/falcon-1024-ts.git && cd falcon-1024-ts
- *   git checkout 4754f0a0ce0a3e11d4e3d7432fcbc434ebeac6ef
- *   git submodule update --init
- *     # emsdk 41190c21c662e9cc1962aea94e71cbae9fd2fc87 (tag 5.0.7),
- *     # falcon ce15e75bceb372867daf6b8e81918ab6978686eb
- *   ./emsdk/emsdk install 5.0.7 && ./emsdk/emsdk activate 5.0.7
- *     # emscripten-releases 6cd98e86d7749ff98b82b7f2ae78eb4f01942788
- *   ./emsdk/node/22.16.0_64bit/bin/node --experimental-strip-types scripts/build.ts
- *   node <falconer>/scripts/wasm-provenance.mjs src/falcon_wasm.js src/falcon_wasm_sync.js
+ * Each file given is then compared with it byte for byte: a rebuilt
+ * `falcon.wasm` as it is, and JavaScript (core's built `dist/falcon-wasm.js`,
+ * or a directory such as the web build's `apps/web/dist/assets`, whose `.js`
+ * files are read together) by the base64 module it holds. JavaScript must hold
+ * exactly that one module, and no string starting with the WebAssembly magic,
+ * which is how Emscripten glue, such as the `falcon-1024` package's, embeds one.
+ * It prints each module's sections with their sizes and SHA-256, and on a
+ * mismatch the first differing offset and the sections that differ. A copy of
+ * the module with one code byte flipped must fail the same comparison, and
+ * malformed base64 must be refused. Exits 1 on any mismatch.
+ *
+ * `--write` regenerates `falcon-wasm.ts` from a rebuilt module, only if it is
+ * the pinned build. A deliberate change of build inputs changes PINNED first.
  */
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const DIST = path.join(ROOT, 'node_modules', 'falcon-1024', 'dist');
-const INSTALLED = [path.join(DIST, 'index.js'), path.join(DIST, 'index.cjs')];
-/** `falcon-1024` 0.2.0 as locked (REPO-05 provenance table). */
-const BASELINE = { size: 95_438, sha256: '5c416483f859809e9fb90b483c43785cf28170ba52d4de7cfbf956bc69665a9a' };
+const SOURCE = path.join(ROOT, 'packages', 'core', 'src', 'falcon-wasm.ts');
+/** `packages/core/falcon/build.sh` output, rebuilt twice from clean checkouts. */
+const PINNED = { size: 95_937, sha256: '22581da83225d4d1b7ed0647699cd33effeeb5dade4ac1cf51cbb0f101d12851' };
 const NAMES = ['custom', 'type', 'import', 'function', 'table', 'memory', 'global', 'export', 'start', 'element', 'code', 'data', 'datacount', 'tag'];
+/** `\0asm` and version 1, base64-encoded from the module's first byte. */
+const MAGIC64 = 'AGFzbQEAAAA';
 
 const sha256 = (/** @type {Uint8Array} */ b) => createHash('sha256').update(b).digest('hex');
+const rel = (/** @type {string} */ file) => path.relative(ROOT, file).split(path.sep).join('/');
 
 /** @param {string} message @returns {never} */
 function fail(message) {
@@ -49,44 +49,31 @@ function fail(message) {
   process.exit(1);
 }
 
-/** The plain escapes a JavaScript string may use, as character codes. @type {Record<string, number>} */
-const ESCAPES = { 0: 0, b: 8, t: 9, n: 10, v: 11, f: 12, r: 13, '"': 34, $: 36, "'": 39, '\\': 92, '`': 96 };
+/** `falcon-wasm.ts` for a module. */
+const render = (/** @type {Uint8Array} */ b) => `// Generated by \`node scripts/wasm-provenance.mjs --write <falcon.wasm>\` from
+// the module packages/core/falcon/build.sh builds. Do not edit: that script
+// checks this file. ${b.length} bytes, SHA-256:
+// ${sha256(b)}
+export const FALCON_WASM: string =
+  '${Buffer.from(b).toString('base64')}';
+`;
 
-/**
- * The JavaScript string literal at `start`, read as data in one pass and
- * decoded as the glue's own `binaryDecode` does. It is never evaluated: a `${`
- * substitution, a raw character JavaScript would reject or normalize, any other
- * escape or a missing end quote returns the reason instead.
- * @param {string} text @param {number} start @returns {Uint8Array | string}
- */
-function decode(text, start) {
-  const quote = text[start], codes = [];
-  for (let i = start + 1; i < text.length;) {
-    const at = i, c = text[i++];
-    if (c === quote) return Uint8Array.from(codes, (n) => ~n >> 8 & n);
-    if (c === '\\') {
-      const e = text[i++] ?? '', digits = e === 'x' ? 2 : e === 'u' ? 4 : 0, simple = ESCAPES[e];
-      const hex = text.slice(i, i + digits);
-      if (digits && hex.length === digits && /^[0-9a-f]+$/i.test(hex)) { codes.push(parseInt(hex, 16)); i += digits; }
-      else if (simple !== undefined && !(e === '0' && /[0-9]/.test(text[i] ?? ''))) codes.push(simple);
-      else return `unsupported escape at offset ${at}`;
-    } else if (quote === '`' ? (c === '$' && text[i] === '{') || c === '\r' : c === '\n' || c === '\r') {
-      return `not plain string data at offset ${at}`;
-    } else codes.push(text.charCodeAt(at));
-  }
-  return 'unterminated string';
+/** Canonical base64 as bytes, or why it is not. @param {string} s @returns {Uint8Array | string} */
+function decode(s) {
+  if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(s)) return 'not base64';
+  const b = Buffer.from(s, 'base64');
+  return b.toString('base64') === s ? new Uint8Array(b) : 'not canonical base64';
 }
 
-/** The embedded module. @param {string} file */
-function extract(file) {
-  const text = readFileSync(file, 'utf8');
-  // emcc writes a quoted string with raw characters; bundlers re-quote it as an
-  // escaped template and may rename `binaryDecode`, so find it by its magic.
-  const calls = [...text.matchAll(/(['"`])(?:\\0|\\x00|\u0000)asm/g)];
-  const [call] = calls;
-  if (calls.length !== 1 || !call) fail(`${file}: expected one string starting with the WebAssembly magic, found ${calls.length}`);
-  const bytes = decode(text, call.index);
-  if (typeof bytes === 'string') fail(`${file}: ${bytes}`);
+/** The one base64 module in some text, read as data. @param {string} label @param {string} text */
+function extract(label, text) {
+  const glue = text.match(/(['"`])(?:\\0|\\x00|\\u0000|\u0000)asm/g) ?? [];
+  if (glue.length) fail(`${label}: holds ${glue.length} string(s) starting with the WebAssembly magic, as Emscripten glue embeds a module`);
+  const found = [...text.matchAll(new RegExp(`(['"\`])(${MAGIC64}[^'"\`]*)\\1`, 'g'))];
+  const count = text.split(MAGIC64).length - 1;
+  if (found.length !== 1 || count !== 1) fail(`${label}: expected one base64 WebAssembly module, found ${count}`);
+  const bytes = decode(/** @type {string} */ (found[0]?.[2]));
+  if (typeof bytes === 'string') fail(`${label}: ${bytes}`);
   return bytes;
 }
 
@@ -125,55 +112,71 @@ function differences(label, ref, got) {
   return [`${label}: ${got.length} bytes vs ${ref.length}, first difference at offset ${i}; differing sections: ${changed.join(', ') || 'none by content (order or count)'}`];
 }
 
-const reference = extract(path.join(DIST, 'index.js'));
-if (reference.length !== BASELINE.size || sha256(reference) !== BASELINE.sha256) {
-  fail(`installed falcon-1024 WebAssembly is ${reference.length} bytes, sha256 ${sha256(reference)}; expected the pinned baseline`);
+const pinned = (/** @type {Uint8Array} */ b) => b.length === PINNED.size && sha256(b) === PINNED.sha256;
+
+if (process.argv[2] === '--write') {
+  const file = process.argv[3] ?? fail('usage: --write <falcon.wasm>');
+  const built = new Uint8Array(readFileSync(file));
+  if (!pinned(built)) fail(`${file} is ${built.length} bytes, sha256 ${sha256(built)}, not the pinned build`);
+  writeFileSync(SOURCE, render(built));
+  console.log(`wrote ${rel(SOURCE)} from ${file}`);
 }
-console.log(`baseline: ${BASELINE.size} bytes, sha256 ${BASELINE.sha256}`);
+
+const source = readFileSync(SOURCE, 'utf8');
+const reference = extract(rel(SOURCE), source);
+if (!pinned(reference)) fail(`${rel(SOURCE)} holds ${reference.length} bytes, sha256 ${sha256(reference)}; expected the pinned build`);
+if (source !== render(reference)) fail(`${rel(SOURCE)} is not exactly what --write makes from its module`);
+console.log(`${rel(SOURCE)}: the pinned build, ${PINNED.size} bytes, sha256 ${PINNED.sha256}`);
 for (const s of sections(reference)) console.log(`  ${s.name.padEnd(12)} @${s.offset} ${s.size} bytes ${s.sha256}`);
 
 const problems = [];
-for (const file of process.argv.length > 2 ? process.argv.slice(2) : INSTALLED) {
-  const got = extract(file);
-  console.log(`${file}: ${got.length} bytes, sha256 ${sha256(got)}`);
-  problems.push(...differences(file, reference, got));
+for (const arg of process.argv[2] === '--write' ? [] : process.argv.slice(2)) {
+  const file = path.resolve(arg);
+  /** @type {Uint8Array} */
+  let got;
+  if (statSync(file).isDirectory()) {
+    const scripts = readdirSync(file).filter((f) => f.endsWith('.js')).sort();
+    got = extract(`${arg} (${scripts.length} .js files)`, scripts.map((f) => readFileSync(path.join(file, f), 'utf8')).join('\n'));
+  } else {
+    got = file.endsWith('.wasm') ? new Uint8Array(readFileSync(file)) : extract(arg, readFileSync(file, 'utf8'));
+  }
+  console.log(`${arg}: ${got.length} bytes, sha256 ${sha256(got)}`);
+  problems.push(...differences(arg, reference, got));
 }
 
-// Decoder controls: escaped and raw data decode; anything else is refused
-// unread, whatever the escape parity before a `${`.
-const MAGIC = [0, 97, 115, 109];
+// Decoder controls: canonical base64 decodes; anything else is refused.
 /** @type {[string, number[] | null][]} */
-const LITERALS = [
-  ["'\\0asm\\x8c\\u00ff\\\\\\'\"'", [...MAGIC, 0x8c, 0xff, 92, 39, 34]],
-  ["'\0asm\x8c'", [...MAGIC, 0x8c]],
-  ['`\\0asm\\\\\\${x}$`', [...MAGIC, 92, 36, 123, 120, 125, 36]],
-  ['`\\0asm\\\\${x}`', null],
-  ['`\\0asm${x}`', null],
-  ['`\\0asm\r`', null],
-  ["'\\0asm\n'", null],
-  ["'\\0asm\\u{61}'", null],
-  ["'\\0asm\\x8'", null],
-  ["'\\0asm\\01'", null],
-  ["'\\0asm\\q'", null],
-  ["'\\0asm", null],
+const CONTROLS = [
+  ['AGFzbQ==', [0, 0x61, 0x73, 0x6d]],
+  ['AGFzbQE=', [0, 0x61, 0x73, 0x6d, 1]],
+  ['AGFzbQEA', [0, 0x61, 0x73, 0x6d, 1, 0]],
+  ['AGFzbR==', null],
+  ['AGFzbQ=', null],
+  ['AGFzbQ', null],
+  ['AGFz bQ==', null],
+  ['AGFz\\bQ==', null],
+  ['AGFz-Q==', null],
+  ['AGFzbQ==AA==', null],
 ];
-for (const [literal, want] of LITERALS) {
-  const got = decode(literal, 0);
+for (const [text, want] of CONTROLS) {
+  const got = decode(text);
   if (want ? typeof got === 'string' || Buffer.compare(got, Uint8Array.from(want)) : typeof got !== 'string') {
-    fail(`decoder control ${JSON.stringify(literal)} gave ${typeof got === 'string' ? got : `[${got}]`}`);
+    fail(`decoder control ${JSON.stringify(text)} gave ${typeof got === 'string' ? got : `[${got}]`}`);
   }
 }
-console.log(`decoder controls: ${LITERALS.length} passed`);
+console.log(`decoder controls: ${CONTROLS.length} passed`);
 
 // Negative control: one flipped byte in the code section must be reported.
 const code = sections(reference).find((s) => s.name === 'code');
-if (!code) fail('baseline has no code section');
+if (!code) fail('the module has no code section');
 const altered = reference.slice();
 const at = code.offset + (code.size >> 1);
 altered[at] = (reference[at] ?? 0) ^ 0x01;
-const control = differences('altered baseline', reference, altered);
-if (control.length !== 1 || !control[0]?.includes('differing sections: code (')) fail(`altered-byte control was not detected: ${control}`);
+const control = differences('altered module', reference, altered);
+if (control.length !== 1 || !control[0]?.includes('differing sections: code (') || pinned(altered)) {
+  fail(`altered-byte control was not detected: ${control}`);
+}
 console.log(`negative control detected: ${control[0]}`);
 
 if (problems.length) fail(`\n${problems.join('\n')}`);
-console.log('match: every module is byte-identical to the baseline');
+console.log(`match: ${process.argv.length > 2 && process.argv[2] !== '--write' ? 'every module given is' : 'the committed module is'} the pinned build`);

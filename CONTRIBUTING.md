@@ -70,12 +70,14 @@ explain the design.
 ## Check a change
 
 For code changes, run the checks CI's offline job runs: `npm run format:check`,
-`npm run typecheck`, `npm run build` and `npm test`, which runs the offline
-suites and needs no Docker. Then add what the change touches:
+`npm run typecheck`, `npm run build`, `node scripts/wasm-provenance.mjs
+packages/core/dist/falcon-wasm.js apps/web/dist/assets` and `npm test`, which
+runs the offline suites and needs no Docker. Then add what the change touches:
 
 | You changed | Also run |
 | --- | --- |
 | `packages/core` | `npm run test:localnet` when submission, the migration ceremony, budgets or ledger reading changed. It needs a healthy LocalNet and fails rather than skips without one. |
+| `packages/core/falcon` | Rebuild the Falcon-1024 WebAssembly as `packages/core/falcon/build.sh` describes and compare it: `node scripts/wasm-provenance.mjs <output>/falcon.wasm`. A module that should change also changes the pinned hash in that script, then `--write` regenerates `src/falcon-wasm.ts`. |
 | `packages/cli` | Nothing more: `npm test` builds the CLI and checks the committed demo recording. If the demo's output changed on purpose, `npm run record` rewrites the recording. |
 | `apps/web` | `npm run test:web-smoke` after `npm run build`. It needs Google Chrome, and a fixed ledger answers every request the page makes. |
 | Documentation only | `npm run format:check` |

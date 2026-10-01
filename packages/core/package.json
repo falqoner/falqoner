@@ -25,7 +25,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -38,7 +39,6 @@
   },
   "dependencies": {
     "algosdk": "^3.7.0",
-    "falcon-1024": "^0.2.0",
     "js-sha512": "^0.8.0"
   }
 }

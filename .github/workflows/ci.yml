@@ -43,6 +43,8 @@ jobs:
       - run: npm run format:check
       - run: npm run typecheck
       - run: npm run build
+      - name: Falcon-1024 WebAssembly provenance (core and web builds)
+        run: node scripts/wasm-provenance.mjs packages/core/dist/falcon-wasm.js apps/web/dist/assets
       - run: npm test
       - name: Built-page smoke (Chrome)
         if: runner.os == 'Linux' && matrix.node == '22.13.0'
