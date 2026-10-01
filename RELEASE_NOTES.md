@@ -2,9 +2,15 @@
 
 Falqoner is experimental prerelease software and has not been externally
 audited. Nothing has been released: there is no tagged version and no package
-on any registry, although the manifests say `0.1.0`.
+on any registry.
 
-## Unreleased: first public source (2026-09-30)
+## Unreleased: 0.1.0-beta.1 candidate (prepared 2026-10-01)
+
+A local beta candidate, not a release: the manifests say `0.1.0-beta.1`, but
+there is no tag, download or registry package. It covers the `@falqoner/core`
+and `@falqoner/cli` packages, with the `falqoner` command, and the web app. The
+licensing questions under [Limits](#limits) must be settled before any of them
+is distributed, and the candidate's files may change when they are.
 
 ### Reading an account
 

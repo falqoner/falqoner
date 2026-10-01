@@ -12,7 +12,7 @@
  * In the consumer it then checks that each package ships its README and the
  * project's LICENSE, and nothing outside `dist`; that core imports and signs
  * and verifies with Falcon-1024 in memory, which runs the embedded
- * WebAssembly and prints no key; that the `falqoner` bin prints help; and
+ * WebAssembly and prints no key; that the `falqoner` command prints help; and
  * that `verify` passes against the CLI's fixed ledger with its offline traps
  * loaded, which refuse any other request.
  *
@@ -140,7 +140,8 @@ const lockedFalcon = workspaceLock.packages['node_modules/falcon-1024'];
 if (copies('falcon-1024').length !== 1 || !falcon || falcon.integrity !== lockedFalcon?.integrity) {
   fail(`falcon-1024 in the consumer is not the workspace's locked release: ${JSON.stringify(falcon)}`);
 }
-console.log(`consumer: both packages from their tarballs; falcon-1024 ${falcon.version} ${falcon.integrity}`);
+const versions = packed.map(({ name }) => `${name}@${lock.packages[`node_modules/${name}`]?.version}`);
+console.log(`consumer: ${versions.join(' and ')} from their tarballs; falcon-1024 ${falcon.version} ${falcon.integrity}`);
 
 // 4. Core runs from the consumer: Falcon-1024 through the embedded WebAssembly.
 const probe = `
@@ -172,7 +173,9 @@ const cliDir = path.join(consumer, 'node_modules', '@falqoner', 'cli');
 const bin = path.join(cliDir, JSON.parse(readFileSync(path.join(cliDir, 'package.json'), 'utf8')).bin.falqoner);
 if (!existsSync(path.join(consumer, 'node_modules', '.bin', 'falqoner'))) fail('npm linked no falqoner bin');
 if (!readFileSync(bin, 'utf8').startsWith('#!/usr/bin/env node\n')) fail('the falqoner bin has no node shebang');
-if (!node('falqoner help', [bin, 'help'], { cwd: consumer }).includes('falqoner - post-quantum readiness')) {
+// The command a user types; --yes=false stops npm fetching any other package by that name.
+if (!npm('falqoner help', ['exec', '--yes=false', '--', 'falqoner', 'help'], consumer)
+  .includes('falqoner - post-quantum readiness')) {
   fail('falqoner help did not print the command reference');
 }
 

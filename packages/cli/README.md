@@ -4,8 +4,8 @@
 or a CI pipeline: what a key controls, whether an account's authority is
 established as post-quantum, and what migrating it would take.
 
-> **Experimental and not audited.** Version 0.1.0 is a pre-release that has
-> not been published to any package registry.
+> **Experimental and not audited.** Version 0.1.0-beta.1 is an unreleased beta
+> candidate. It has not been tagged or published to any package registry.
 
 ## Install
 
@@ -18,7 +18,7 @@ and install the two files together, because this package depends on
 npm ci && npm run build
 npm pack -w @falqoner/core -w @falqoner/cli
 # then, in your own project:
-npm install /path/to/falqoner-core-0.1.0.tgz /path/to/falqoner-cli-0.1.0.tgz
+npm install /path/to/falqoner-core-0.1.0-beta.1.tgz /path/to/falqoner-cli-0.1.0-beta.1.tgz
 npx --no falqoner help
 ```
 
