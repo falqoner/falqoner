@@ -53,7 +53,7 @@ Falqoner makes no prediction about when such a computer might exist. Moving auth
 
 ## Browser migration: limits and failure handling
 
-Migration runs only in the web app, only on TestNet (checked by its exact genesis) or a private LocalNet, and never on MainNet, whatever the endpoint or label. The funding and the rekey must be signed by a single Ed25519 key; multisig, logic-signature and post-quantum authorities are refused.
+The MainNet web page is read-only in this beta: it does not offer key generation, recovery-phrase entry or migration. Offline CLI key generation remains a separate explicit secret-producing command; keys themselves are not network-specific. Migration runs only in the web app, only on TestNet (checked by its exact genesis) or a private LocalNet, and never on MainNet, whatever the endpoint or label. The funding and the rekey must be signed by a single Ed25519 key; multisig, logic-signature and post-quantum authorities are refused.
 
 - **Four steps, not one atomic operation.** Funding, proof, rekey and verification are separate transactions. A run can stop between any two. Fees for confirmed steps are spent even if a later step never runs, and funding sent to the new address stays there, controlled by the new key.
 - **Checked before every step.** The page checks the node's network, re-reads the account's authority and re-reads the budget. A step that would cost more than you approved, or that the account can no longer afford, is not sent. When the network runs a consensus protocol whose Falcon-1024 rules Falqoner does not encode, or an upgrade is pending, no budget is offered and nothing is signed.

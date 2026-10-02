@@ -29,6 +29,9 @@ distributed, and this version's files may change when they are.
 
 ### Migrating an account (web app, TestNet and LocalNet only)
 
+- The MainNet page is read-only: key generation and migration are disabled.
+  Use TestNet or LocalNet to try the browser key-generation flow.
+
 - Funding, proof, rekey and verification are four separate transactions, never
   sent on MainNet. The rekey waits until the proof's Falcon-1024 signature has
   been read back and verified locally.

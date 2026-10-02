@@ -22,6 +22,7 @@ import {
   type Stage,
 } from './operation';
 import { isResolved, stageStatus, type AttemptState } from './journal';
+import type { NetworkName } from './network';
 
 /**
  * The migration ceremony, and the one place in Falconer that handles
@@ -39,6 +40,7 @@ import { isResolved, stageStatus, type AttemptState } from './journal';
  * being typed, and every command it sends is checked again by the operation.
  */
 export function Migrate({
+  network,
   exposure,
   operation,
   commands,
@@ -47,6 +49,7 @@ export function Migrate({
   onGenerate,
   onDismiss,
 }: {
+  network: NetworkName;
   /** The latest scan of the account on screen. Used only before a key exists. */
   exposure: AccountExposure | null;
   operation: OperationState;
@@ -62,6 +65,7 @@ export function Migrate({
     if (!exposure) return null;
     return (
       <Intro
+        network={network}
         exposure={exposure}
         completedTarget={completedTarget}
         headingRef={headingRef}
@@ -76,12 +80,14 @@ export function Migrate({
 }
 
 function Intro({
+  network,
   exposure,
   completedTarget,
   headingRef,
   blocked,
   onGenerate,
 }: {
+  network: NetworkName;
   exposure: AccountExposure;
   completedTarget: string | null;
   headingRef: RefObject<HTMLHeadingElement>;
@@ -125,6 +131,21 @@ function Intro({
             account&rsquo;s behalf.
           </div>
         )}
+      </div>
+    );
+  }
+
+  if (network === 'mainnet') {
+    return (
+      <div className="panel">
+        <h2 ref={headingRef} tabIndex={-1}>Migration</h2>
+        <p className="dim" id="mainnet-keygen-disabled">
+          Key generation is disabled on MainNet. Switch to TestNet or LocalNet
+          to try the migration flow.
+        </p>
+        <button disabled aria-describedby="mainnet-keygen-disabled">
+          Generate a post-quantum key
+        </button>
       </div>
     );
   }

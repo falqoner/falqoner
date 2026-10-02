@@ -365,6 +365,13 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
           </button>
         </div>
 
+        {network === 'mainnet' && (
+          <p className="callout" data-mainnet-read-only>
+            MainNet is read-only in this beta. Key generation and migration are
+            disabled. Use TestNet or LocalNet to try them.
+          </p>
+        )}
+
         <div className="search" style={{ marginTop: 0 }}>
           <label className="field" style={{ minWidth: 210 }}>
             <span>Asset ids to check exactly</span>
@@ -506,6 +513,7 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
         <Migrate
           // A new operation gets a fresh panel, with nothing typed into it.
           key={operation.status === 'idle' ? 'idle' : operation.id}
+          network={scanned?.request.network ?? network}
           exposure={exposure ?? panelExposure}
           operation={operation}
           commands={commands}
@@ -520,10 +528,10 @@ export default function App({ journal, tabLock, timing }: AppProps = {}) {
         <p>
           Falconer reads public chain data through algod and Indexer, and
           trusts the records that provider reports as confirmed. The audit
-          only reads. The migration panel handles recovery phrases: it
-          generates a Falcon key and its phrase in your browser with
-          WebAssembly and, on TestNet and LocalNet, takes the phrase of the key
-          that signs the rekey. Neither is ever transmitted; only signed
+          only reads. On TestNet and LocalNet, the migration panel handles
+          recovery phrases: it generates a Falcon key and its phrase in your
+          browser with WebAssembly, and takes the phrase of the key that signs
+          the rekey. Neither is ever transmitted; only signed
           transactions are. Post-quantum authority is only reported when the
           provider reports a confirmed transaction authorised by a
           Falcon-1024 signature, and Falconer checks locally that the key and

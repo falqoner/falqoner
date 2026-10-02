@@ -22,7 +22,7 @@ import {
 } from '@falqoner/core';
 // The real scan, from its own module: the test files mock it on '@falqoner/core'.
 import { analyzeAccount as realAnalyze } from '../../../packages/core/src/exposure';
-import { fakeProvider } from '../../../packages/core/test/fake-provider';
+import { fakeProvider, type FakeSpec } from '../../../packages/core/test/fake-provider';
 import { scriptedLedger, type ScriptedLedger } from '../../../packages/core/test/scripted-ledger';
 import App, { type AppProps } from '../src/App';
 import { JOURNAL_KEY, browserJournal, browserTabLock, type Journal } from '../src/journal';
@@ -48,8 +48,11 @@ export const T3 = real(63);
 
 export const STAGE_LIST = ['funding', 'proof', 'rekey', 'verification'] as const;
 
-export const exposureOf = (address: string, account: { amount?: bigint; authAddr?: string } = {}) =>
-  realAnalyze(fakeProvider({ accounts: { [address]: { amount: 5_000_000n, ...account } } }).clients, address);
+export const exposureOf = (
+  address: string,
+  account: { amount?: bigint; authAddr?: string } = {},
+  history: FakeSpec['history'] = {},
+) => realAnalyze(fakeProvider({ accounts: { [address]: { amount: 5_000_000n, ...account } }, history }).clients, address);
 
 /** The real scan's refusal when the node answers `address`'s account read with `record` (CORE-04). */
 export const refusalOf = (address: string, record: unknown) => {

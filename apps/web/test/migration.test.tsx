@@ -63,6 +63,7 @@ import {
   type World,
 } from './harness';
 import { MAINNET_GENESIS, deferred, fakeLocks } from './fixtures';
+import { falconAuthority, falconRecord } from '../../../packages/core/test/fake-provider';
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -605,6 +606,43 @@ describe('refused before anything is sent', () => {
     expect(local().landed).toHaveLength(0);
   });
 
+  it('starts read-only on MainNet and enables key generation only after a test-network scan', async () => {
+    expect($.networkSelect().value).toBe('mainnet');
+    expect($.q('[data-mainnet-read-only]')!.textContent).toContain('MainNet is read-only');
+    await scanned(EXPOSURE_A, 'mainnet');
+    expect($.button('Generate a post-quantum key')!.disabled).toBe(true);
+    expect($.phraseShown()).toEqual([]);
+    expect(mocks.generatePqIdentity).not.toHaveBeenCalled();
+    for (const network of ['testnet', 'localnet']) {
+      await scanned(EXPOSURE_A, network);
+      expect($.q('[data-mainnet-read-only]')).toBeNull();
+      expect($.button('Generate a post-quantum key')!.disabled).toBe(false);
+      await settle(() => click($.button('Generate a post-quantum key')!));
+      expect($.phraseShown()).toHaveLength(25);
+      await settle(() => setValue($.networkSelect(), 'mainnet'));
+      expect($.phraseShown()).toEqual([]);
+      expect($.signing()).toBeNull();
+      await scanned(EXPOSURE_A, 'mainnet');
+      expect($.button('Generate a post-quantum key')!.disabled).toBe(true);
+    }
+    expect(mocks.generatePqIdentity).toHaveBeenCalledTimes(2);
+    expect(world.ledgers.mainnet.count('params')).toBe(0);
+    expect(world.ledgers.mainnet.count('send')).toBe(0);
+  });
+
+  it('says a provider-confirmed post-quantum account on MainNet has nothing to migrate', async () => {
+    const pq = falconAuthority(71);
+    const exposure = await exposureOf(pq.address, {}, { [pq.address]: [falconRecord('WEB-MAINNET-PQ', pq.address, pq)] });
+    expect(exposure.isPostQuantum).toBe(true);
+    await scanned(exposure, 'mainnet');
+    expect($.text()).toContain('already under post-quantum authority');
+    expect($.text()).not.toContain('Key generation is disabled on MainNet.');
+    expect($.button('Generate a post-quantum key')).toBeUndefined();
+    expect($.phraseShown()).toEqual([]);
+    expect($.signing()).toBeNull();
+    expect(mocks.generatePqIdentity).not.toHaveBeenCalled();
+  });
+
   it('offers no execution for a plan with blockers, or on MainNet', async () => {
     // The ledger holds what the scan reported: too little for the migration.
     local().setBalance(A, 150_000n);
@@ -617,8 +655,13 @@ describe('refused before anything is sent', () => {
     // Affordable on MainNet, so the only thing standing in the way is the network.
     world.ledgers.mainnet.setBalance(A, 10_000_000n);
     await scanned(EXPOSURE_A, 'mainnet');
+    const generated = mocks.generatePqIdentity.mock.calls.length;
+    expect($.button('Generate a post-quantum key')!.disabled).toBe(true);
     await settle(() => click($.button('Generate a post-quantum key')!));
-    expect($.text()).toContain('Execution from this page is limited to TestNet and LocalNet.');
+    expect(mocks.generatePqIdentity).toHaveBeenCalledTimes(generated);
+    expect($.phraseShown()).toEqual([]);
+    expect($.signing()).toBeNull();
+    expect($.text()).toContain('Key generation is disabled on MainNet.');
     expect($.button('Migrate')).toBeUndefined();
     expect(sends()).toBe(0);
   });
@@ -700,7 +743,6 @@ describe('the command handler, called directly', () => {
     // The ceremony runs the real preflight: a key whose private half is another key's fails its self-test.
     ['a failed preflight check', () => (world.identities[0] = { ...T1, privateKey: T2.privateKey }), {}, /preflight check failed: Falcon key signs and verifies/],
     ['a budget that cannot go ahead', () => local().setBalance(A, 150_000n), { exposure: () => POOR_A }, /budget is blocked: .*the migration needs/],
-    ['MainNet', () => undefined, { network: 'mainnet' }, /limited to TestNet and LocalNet/],
   ];
 
   it.each(refusals)('refuses %s even though no button was pressed', async (name, arrange, setup, reason) => {
@@ -712,6 +754,21 @@ describe('the command handler, called directly', () => {
     // Only the budget was read; nothing was prepared.
     expect(world.ledgers[setup.network ?? 'localnet'].count('params')).toBe(1);
     expect(sends()).toBe(0);
+  });
+
+  it('refuses MainNet preparation before key generation or any budget read, including replacement', async () => {
+    const mainnet = base(EXPOSURE_A, 'mainnet');
+    expect(handle.commands.prepare(mainnet)).toBe(false);
+    expect(handle.commands.current().status).toBe('idle');
+    expect(mocks.generatePqIdentity).not.toHaveBeenCalled();
+    expect(world.ledgers.mainnet.count('params')).toBe(0);
+    await settle(() => void handle.commands.prepare(base(EXPOSURE_A)));
+    const prepared = handle.commands.current();
+    expect(handle.commands.prepare(mainnet)).toBe(false);
+    expect(handle.commands.current()).toBe(prepared);
+    expect(mocks.generatePqIdentity).toHaveBeenCalledTimes(1);
+    expect(world.ledgers.mainnet.count('params')).toBe(0);
+    expect(world.ledgers.mainnet.count('send')).toBe(0);
   });
 
   it('refuses to start before the budget has been read, and on a budget it cannot approve', async () => {

@@ -1086,6 +1086,8 @@ export function useMigrationOperation(
       journalProblem: () => problemRef.current,
 
       prepare(base) {
+        // MainNet is inspection-only in the beta, including local key creation.
+        if (base.network !== 'testnet' && base.network !== 'localnet') return false;
         if (problemRef.current || lockReason(ref.current)) return false;
         const identity = generatePqIdentity();
         const context: OperationContext = Object.freeze({
