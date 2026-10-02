@@ -48,12 +48,18 @@ function text(el: ReactElement): string {
     .replace(/<[^>]+>/g, ' ')
     .replace(/&#x27;/g, "'")
     .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
+    // Decode ampersands last so literal entity text is not decoded twice.
+    .replace(/&amp;/g, '&')
     .replace(/\s+/g, ' ')
     .trim();
 }
+
+it('preserves literal entity text when reading rendered markup', () => {
+  const literal = '&lt; &gt; &amp; &quot; &#x27; &amp;lt; <tag> "quoted"';
+  expect(text(<span>{literal}</span>)).toBe(literal);
+});
 
 // A post-quantum address, signing for itself and for one protected account.
 const C = falconAuthority(71);
