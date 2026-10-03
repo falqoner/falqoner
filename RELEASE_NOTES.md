@@ -8,9 +8,10 @@ here alone is not a release. No package is published on any registry.
 ## 0.1.0-beta.1 (beta, prepared 2026-10-01)
 
 A beta for testers. It covers the `@falqoner/core` and `@falqoner/cli`
-packages, with the `falqoner` command, and the web app. The licensing
-questions under [Limits](#limits) must be settled before any of them is
-distributed, and this version's files may change when they are.
+packages, with the `falqoner` command, and the web app. The project owner
+has directed beta preparation on the assumption that the Algorand extension
+may be redistributed. This is an owner assumption, not upstream confirmation;
+the licensing questions under [Limits](#limits) remain unresolved.
 
 ### Reading an account
 
